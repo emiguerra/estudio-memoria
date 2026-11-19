@@ -1,0 +1,3 @@
+title: estudio memoria
+description: Editor local para diagramar la memoria de título de rastro.
+exclude: [abrir-editor.command, servidor_memoria.py]
