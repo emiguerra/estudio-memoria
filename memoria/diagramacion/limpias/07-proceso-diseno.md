@@ -2,8 +2,7 @@
 
 En investigación por diseño, el recorrido es parte del argumento (Gaver, 2012). Por eso
 este capítulo cuenta los errores y los cambios de rumbo con el mismo detalle que los
-aciertos. Su fuente primaria es la bitácora del proyecto: un registro datado de cada
-decisión, cada falla y cada pivote.
+aciertos.
 
 ## 7.0 Las tres arquitecturas
 
@@ -26,9 +25,8 @@ capturarlo en el origen.
 
 La aplicación se distribuyó en noviembre de 2026 bajo el nombre `rastrapp`. Ese nombre deja
 ver el del proyecto, y el camuflaje dependía en parte de que la aplicación no anunciara lo
-que era. Que el nombre no haya cambiado es un dato del estudio y no un detalle
-administrativo: forma parte de las condiciones en que los participantes aceptaron la
-aplicación.
+que era. Que no haya cambiado es un dato del estudio: forma parte de las condiciones en
+que los participantes la aceptaron.
 
 ## 7.2 Logotipo e identidad
 
@@ -177,8 +175,8 @@ opción, «Activar», y se repite hasta que la persona escanea su galería.
 
 <!-- fig:app-esquemas -->
 
-Los esquemas muestran una interfaz casi vacía, y esa pobreza es intencional: cada
-pantalla pide una sola cosa sin dar motivos para detenerse.
+Los esquemas muestran una interfaz casi vacía a propósito: cada pantalla pide una sola cosa
+sin dar motivos para detenerse.
 
 <!-- fig:app-pantallas -->
 
@@ -268,8 +266,8 @@ de los mapas se detalla en 8.3.
 
 ## 7.6 Metodología de trabajo
 
-El registro del proceso forma parte del método. La bitácora del proyecto, datada y con
-aciertos, errores y pivotes, es la fuente primaria de este capítulo.
+El registro del proceso forma parte del método: la bitácora del proyecto, un registro datado
+de cada decisión, cada falla y cada pivote, es la fuente primaria de este capítulo.
 
 ## 7.7 El evento: la revelación en vivo (16 de noviembre de 2026)
 
@@ -291,11 +289,10 @@ rostro de registro de cada persona, la identificación en vivo, los patrones de 
 seguimiento posterior a la revelación, el expediente con su impresión y su borrado, la
 curaduría de la galería y las pantallas de proyección.
 
-En la sala, el panel coordinaba los tres aparatos de la revelación. El **iPad** escanea el
-rostro y la investigadora confirma la coincidencia con un toque. El **monitor vertical**
-muestra la malla durante el escaneo, la identidad confirmada y después la galería. La
-**impresora térmica** recibe el expediente con un botón, sin el diálogo del navegador que
-habría dejado ver la tramoya frente a la persona.
+En la sala, el panel coordinaba los tres aparatos de la revelación: el **iPad** que escanea
+el rostro, el **monitor vertical** que muestra la malla, la identidad confirmada y después
+la galería, y la **impresora térmica**, que recibe el expediente con un botón, sin el
+diálogo del navegador que habría dejado ver la tramoya frente a la persona.
 
 ### La versión sin conexión
 

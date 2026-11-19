@@ -197,6 +197,10 @@
   .hoja canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; transition: opacity .2s; }
   .hoja.cargando canvas { opacity: .5; }
   .tira button canvas { width: 100%; height: 100%; display: block; }
+  .celda.intervalo { gap: 4px; color: var(--etq); font-size: 12px; padding: 0 12px; cursor: default; }
+  .celda.intervalo select { border: 0; background: transparent; font-size: 12px; color: var(--negro); padding: 0 2px; cursor: pointer; }
+  .estado.pendiente .punto { background: var(--ambar); }
+  .hoja .velo.pendiente { background: var(--ambar-claro); color: #8a4500; }
   .chip.cambios { cursor: pointer; } .chip.cambios b { color: var(--azul); }
   .bienvenida { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; background: var(--g1); }
   .bienvenida div { max-width: 440px; text-align: center; color: var(--etq); line-height: 1.5; padding: 0 20px; }
@@ -244,6 +248,7 @@
   <symbol id="ic-reset" viewBox="0 0 16 16"><path d="M3.5 8a4.5 4.5 0 1 0 1.3-3.2M3.5 2.5v2.5H6"/></symbol>
   <symbol id="ic-deshacer" viewBox="0 0 16 16"><path d="M5 3.5L2.5 6 5 8.5M2.5 6H10a3.5 3.5 0 0 1 0 7H6"/></symbol>
   <symbol id="ic-exportar" viewBox="0 0 16 16"><path d="M8 10V2M5 5l3-3 3 3M3 9v5h10V9"/></symbol>
+  <symbol id="ic-compilar" viewBox="0 0 16 16"><path d="M4.5 3v10l8-5z"/></symbol>
   <symbol id="ic-izq" viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5"/></symbol>
   <symbol id="ic-der" viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5"/></symbol>
 </svg>
@@ -258,6 +263,9 @@
     <span class="chip cambios" id="m-cambios" hidden title="Lo que editaste en este navegador"></span>
   </div>
   <div class="estado" id="estado" role="status" title="Estado de la compilación"><span class="punto"></span><span id="estado-txt">Conectando…</span></div>
+  <label class="celda intervalo" title="Cada cuánto se compila si hay cambios">Compilar
+    <select id="intervalo" aria-label="Intervalo de compilación"><option value="10">cada 10 s</option><option value="30">cada 30 s</option><option value="60">cada 1 min</option><option value="0">a mano</option></select></label>
+  <button class="celda" id="b-compilar" title="Compilar ahora (⌘↵)"><svg class="i"><use href="#ic-compilar"/></svg>Compilar ahora</button>
   <button class="celda" id="b-deshacer" title="Volver a las reglas anteriores (⌘Z)"><svg class="i"><use href="#ic-deshacer"/></svg>Deshacer</button>
   <button class="celda azul" id="b-exportar" title="Compila el PDF final"><svg class="i"><use href="#ic-exportar"/></svg>Exportar PDF</button>
 </header>
@@ -368,10 +376,25 @@ import * as motor from './web/motor.js';
   function trabajando(si, txt) {
     const e = $('#estado'); e.classList.toggle('trabajando', si); if (si) e.classList.remove('error');
     $('#estado-txt').textContent = txt || (si ? 'Compilando…' : 'Listo');
-    $('#velo').hidden = !si; $('#hoja').classList.toggle('cargando', si);
+    $('#velo').hidden = !si && !S.pendiente; $('#hoja').classList.toggle('cargando', si);
   }
   function pintarEstado(e) {
     if (e) S.estado = e;
+    pintarMetricas();
+    const E = S.estado;
+    const est = $('#estado');
+    if (E.error) {
+      est.classList.add('error'); est.classList.remove('trabajando', 'pendiente');
+      $('#estado-txt').textContent = 'No compila · la vista muestra la última versión buena';
+      est.onclick = () => mostrarErrores('El documento no compila. Si fue una regla, «Deshacer» la vuelve atrás.', E.error.map(x => x.texto + (x.donde ? ' · ' + x.donde : '')));
+    } else {
+      est.classList.remove('error', 'pendiente'); est.onclick = E.advertencias?.length ? () => mostrarErrores('Avisos de Typst', E.advertencias.map(x => x.texto + (x.donde ? ' · ' + x.donde : ''))) : null;
+      $('#estado-txt').textContent = `Listo ${E.hora || ''} · ${E.segundos || 0} s` + (E.advertencias?.length ? ` · ${E.advertencias.length} aviso(s)` : '');
+    }
+    pintarIr(); pintarTira(); verPagina(S.pagina, false);
+    if (S.pendiente) reloj();
+  }
+  function pintarMetricas() {
     const E = S.estado;
     $('#m-pag').innerHTML = `<b>${E.paginas || '–'}</b> páginas`;
     const pal = $('#m-pal'); pal.innerHTML = `<b>${fmtN(E.palabras)}</b> / ${fmtN(E.limite_palabras || 20000)} palabras`;
@@ -380,16 +403,6 @@ import * as motor from './web/motor.js';
     const pdf = $('#m-pdf'); pdf.innerHTML = `PDF <b>${fmtBytes(E.pdf_bytes)}</b>`;
     pdf.className = 'chip' + (E.pdf_bytes > (E.limite_pdf || 1e7) ? ' mal' : '');
     $('#de').textContent = '/ ' + (E.paginas || '–');
-    const est = $('#estado');
-    if (E.error) {
-      est.classList.add('error'); est.classList.remove('trabajando');
-      $('#estado-txt').textContent = 'Error de compilación · ver detalle';
-      est.onclick = () => mostrarErrores('El documento no compila', E.error.map(x => x.texto + (x.donde ? ' · ' + x.donde : '')));
-    } else {
-      est.classList.remove('error'); est.onclick = E.advertencias?.length ? () => mostrarErrores('Avisos de Typst', E.advertencias.map(x => x.texto + (x.donde ? ' · ' + x.donde : ''))) : null;
-      $('#estado-txt').textContent = `Listo ${E.hora || ''} · ${E.segundos || 0} s` + (E.advertencias?.length ? ` · ${E.advertencias.length} aviso(s)` : '');
-    }
-    pintarIr(); pintarTira(); verPagina(S.pagina, false);
   }
   function mostrarErrores(titulo, lista) {
     $('#modal-img').hidden = true;
@@ -500,25 +513,25 @@ import * as motor from './web/motor.js';
     el.querySelector('.reset').onclick = () => { fijar(g.defecto); pintarReglas(); };
   }
   let tReglas, enVuelo = 0;
-  function programarReglas() { clearTimeout(tReglas); trabajando(true, 'Esperando…'); tReglas = setTimeout(enviarReglas, 450); }
+  // las reglas se guardan solas al moverlas; la compilación va por su cuenta (ver «compilación»)
+  function programarReglas() { ultimaEdicion = Date.now(); clearTimeout(tReglas); tReglas = setTimeout(enviarReglas, 250); }
   async function enviarReglas() {
-    const mio = ++enVuelo; trabajando(true);
+    const mio = ++enVuelo;
     try {
-      const d = await api('/api/reglas', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(S.reglas) });
+      await api('/api/reglas', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(S.reglas) });
       if (mio !== enVuelo) return;            // llegó un cambio más nuevo: gana el último
       S.bueno = JSON.parse(JSON.stringify(S.reglas));
-      pintarEstado(d.estado);
+      programarCompilacion();
     } catch (e) {
       if (mio !== enVuelo) return;
-      trabajando(false); pintarEstado();
-      S.reglas = JSON.parse(JSON.stringify(S.bueno || {})); pintarReglas();   // vuelve a lo último que compiló
+      S.reglas = JSON.parse(JSON.stringify(S.bueno || {})); pintarReglas();   // valor fuera de rango: vuelve al último válido
       if (e.detalle) mostrarErrores(e.message, e.detalle); else toast(e.message, true);
     }
   }
   $('#b-restaurar').onclick = () => { if (!confirm('¿Volver todas las reglas a los valores originales del sistema?')) return; S.reglas = {}; pintarReglas(); programarReglas(); };
   async function deshacer() {
     trabajando(true, 'Deshaciendo…');
-    try { const d = await api('/api/deshacer-reglas', { method: 'POST' }); S.reglas = d.reglas; S.bueno = JSON.parse(JSON.stringify(d.reglas)); pintarReglas(); pintarEstado(d.estado); toast('Volviste a las reglas anteriores'); }
+    try { const d = await api('/api/deshacer-reglas', { method: 'POST' }); S.reglas = d.reglas; S.bueno = JSON.parse(JSON.stringify(d.reglas)); pintarReglas(); trabajando(false); pintarEstado(); programarCompilacion(); toast('Volviste a las reglas anteriores'); }
     catch (e) { trabajando(false); pintarEstado(); toast(e.message, true); }
   }
   $('#b-deshacer').onclick = deshacer;
@@ -530,7 +543,7 @@ import * as motor from './web/motor.js';
     const ult = leerLocal('cap', caps[1]?.archivo); $('#sel-cap').value = ult; await abrirCap(ult);
   }
   async function abrirCap(archivo) {
-    if (S.sucio && !confirm('Hay cambios sin guardar en este capítulo. ¿Descartarlos?')) { $('#sel-cap').value = S.cap; return; }
+    if (S.sucio) await guardarTexto();      // autoguardado: nada se pierde al cambiar de capítulo
     const d = await api('/api/capitulo?archivo=' + encodeURIComponent(archivo));
     S.cap = archivo; S.huella = d.huella; guardarLocal('cap', archivo);
     $('#md').value = d.texto; marcarSucio(false); avisosTexto(d.desconocidos);
@@ -542,24 +555,69 @@ import * as motor from './web/motor.js';
     if (malos?.length) h += `<div class="aviso">Marcadores que no existen en el catálogo (no se van a ver):<br>${malos.map(m => `<code>${esc(m)}</code>`).join('<br>')}</div>`;
     a.innerHTML = h;
   }
-  function marcarSucio(v) { S.sucio = v; $('#b-guardar').disabled = !v; $('#b-guardar').textContent = v ? 'Guardar •' : 'Guardado'; }
-  $('#md').oninput = () => marcarSucio(true);
+  function marcarSucio(v) { S.sucio = v; $('#b-guardar').textContent = v ? 'Guardando…' : 'Guardado ✓'; }
+  let tTexto;
+  $('#md').oninput = () => { marcarSucio(true); ultimaEdicion = Date.now(); clearTimeout(tTexto); tTexto = setTimeout(guardarTexto, 700); };
   $('#sel-cap').onchange = async e => { await abrirCap(e.target.value); const m = S.estado.mapa?.find(x => x.archivo === S.cap); if (m?.pagina) verPagina(m.pagina); else if (S.cap?.startsWith('00')) verPagina(2); };
-  $('#b-recargar').onclick = () => { S.sucio = false; abrirCap(S.cap); };
+  $('#b-recargar').onclick = async () => { clearTimeout(tTexto); S.sucio = false; await abrirCap(S.cap); };
   $('#b-ir-cap').onclick = () => { const c = S.caps.find(x => x.archivo === S.cap); const m = S.estado.mapa?.find(x => x.archivo === S.cap); if (m?.pagina) verPagina(m.pagina); else toast(c?.num === '00' ? 'El resumen está en la página 2' : 'Sin página para este capítulo'); };
+  // guarda en el navegador sin compilar; se llama sola 0,7 s después de la última tecla
   async function guardarTexto() {
-    if (!S.sucio) return; trabajando(true, 'Guardando…');
+    clearTimeout(tTexto);
+    if (!S.sucio) return;
+    const texto = $('#md').value;
     try {
-      const d = await api('/api/capitulo', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ archivo: S.cap, huella: S.huella, texto: $('#md').value }) });
-      S.huella = d.huella; marcarSucio(false); avisosTexto(d.desconocidos); pintarEstado(d.estado);
-      toast(d.aviso || 'Guardado y compilado'); cargarCapitulosSilencio();
+      const d = await api('/api/capitulo', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ archivo: S.cap, huella: S.huella, texto }) });
+      S.huella = d.huella; if ($('#md').value === texto) marcarSucio(false); avisosTexto(d.desconocidos);
+      S.estado.palabras = d.estado.palabras; pintarMetricas(); cargarCapitulosSilencio();
+      programarCompilacion();
     } catch (e) {
-      trabajando(false); pintarEstado();
       if (e.codigo === 409) avisosTexto([], e.message); else toast(e.message, true);
     }
   }
   async function cargarCapitulosSilencio() { try { S.caps = await api('/api/capitulos'); const v = $('#sel-cap').value; $('#sel-cap').innerHTML = S.caps.map(c => `<option value="${esc(c.archivo)}">${esc(c.num)} · ${esc(c.titulo)} — ${fmtN(c.palabras)} pal.</option>`).join(''); $('#sel-cap').value = v; } catch (e) {} }
-  $('#b-guardar').onclick = guardarTexto;
+  $('#b-guardar').onclick = () => compilarAhora();
+  $('#b-guardar').title = 'Se guarda solo. Clic para compilar ahora (⌘S)';
+
+  // ── compilación: cada cierto intervalo, solo si hay cambios y nunca a media escritura ──
+  let modoIntervalo = +leerLocal('intervalo', 30), plazo = 0, tCompilar, compilando = false, ultimaEdicion = 0;
+  $('#intervalo').value = String(modoIntervalo);
+  $('#intervalo').onchange = e => { modoIntervalo = +e.target.value; guardarLocal('intervalo', modoIntervalo); plazo = 0; if (S.pendiente) programarCompilacion(); };
+  function programarCompilacion() {
+    S.pendiente = true;
+    if (!plazo && modoIntervalo) plazo = Date.now() + modoIntervalo * 1000;
+    reloj();
+  }
+  function reloj() {
+    clearTimeout(tCompilar);
+    if (!S.pendiente || compilando) return;
+    if (!modoIntervalo) return pintarPendiente('sin compilar · ⌘↵ para compilar');
+    const falta = plazo - Date.now();
+    if (falta > 0) { pintarPendiente(`compila en ${Math.ceil(falta / 1000)} s`); tCompilar = setTimeout(reloj, Math.min(1000, falta)); return; }
+    // compilar congela la página unos segundos: se espera una pausa en la escritura
+    if (Date.now() - ultimaEdicion < 2000) { pintarPendiente('compila cuando hagas una pausa'); tCompilar = setTimeout(reloj, 400); return; }
+    compilarAhora();
+  }
+  function pintarPendiente(txt) {
+    const e = $('#estado'); e.classList.remove('trabajando', 'error'); e.classList.add('pendiente');
+    $('#estado-txt').textContent = 'Cambios guardados · ' + txt;
+    const v = $('#velo'); v.hidden = false; v.classList.add('pendiente'); v.textContent = 'Vista sin los últimos cambios';
+  }
+  async function compilarAhora() {
+    if (compilando) return;
+    clearTimeout(tCompilar); plazo = 0;
+    if (S.sucio) await guardarTexto();
+    clearTimeout(tCompilar);
+    compilando = true; S.pendiente = false;
+    $('#estado').classList.remove('pendiente'); $('#velo').classList.remove('pendiente'); $('#velo').textContent = 'Compilando…';
+    trabajando(true, 'Compilando…');
+    await new Promise(r => setTimeout(r, 60));     // deja que el aviso se pinte antes de que Typst ocupe la página
+    try { const e = await api('/api/compilar', { method: 'POST' }); trabajando(false); pintarEstado(e); }
+    catch (e) { trabajando(false); toast(e.message, true); }
+    compilando = false;
+    if (S.pendiente) { plazo = 0; programarCompilacion(); }
+  }
+  $('#b-compilar').onclick = () => compilarAhora();
 
   // inserta un marcador en el primer espacio entre bloques después del cursor
   function insertar(marcador) {
@@ -569,8 +627,8 @@ import * as motor from './web/motor.js';
     const antes = t.slice(0, corte).replace(/\s+$/, ''), despues = t.slice(corte).replace(/^\s+/, '');
     const nuevo = antes + '\n\n' + marcador + '\n\n' + despues;
     ta.value = nuevo; const ini = antes.length + 2; ta.setSelectionRange(ini, ini + marcador.length);
-    marcarSucio(true); abrirTab('texto'); ta.focus();
-    toast('Insertado en el texto. Guarda (⌘S) para verlo en la página.');
+    abrirTab('texto'); ta.focus(); ta.dispatchEvent(new Event('input'));
+    toast('Insertado en el texto. Se verá en la página con la próxima compilación (⌘↵ para ya).');
   }
 
   // ── LÁMINAS ───────────────────────────────────────────
@@ -659,7 +717,7 @@ import * as motor from './web/motor.js';
   // ── teclado ───────────────────────────────────────────
   document.addEventListener('keydown', e => {
     const enTexto = /^(TEXTAREA|INPUT|SELECT)$/.test(document.activeElement?.tagName);
-    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); guardarTexto(); return; }
+    if ((e.metaKey || e.ctrlKey) && (e.key === 's' || e.key === 'Enter')) { e.preventDefault(); compilarAhora(); return; }
     if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !enTexto) { e.preventDefault(); deshacer(); return; }
     if (enTexto) return;
     if (e.key === 'ArrowRight') verPagina(S.pagina + 1);

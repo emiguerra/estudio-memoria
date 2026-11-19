@@ -297,20 +297,15 @@ export async function api(ruta, opts = {}) {
   if (metodo === 'PUT' && p === '/api/reglas') {
     const [limpias, errores] = validarReglas(cuerpo());
     if (errores.length) throw err(422, 'Hay reglas con valores no válidos', errores);
+    // se guarda al tiro; la compilación va aparte (POST /api/compilar), cuando la interfaz decida
     const antes = leer(REGLAS);
     await cambiar(REGLAS, jsonU8(limpias));
-    const r = await compilarTodo();
-    if (!r.ok) {   // no compila: vuelve atrás y no guarda
-      await cambiar(REGLAS, antes); await compilarTodo();
-      throw err(422, 'Con ese valor el documento no compila; se mantuvo el anterior.', r.errores.map(e => e.texto + (e.donde ? ' · ' + e.donde : '')));
-    }
     M.historialReglas.push(antes); if (M.historialReglas.length > 60) M.historialReglas.shift();
     return { reglas: limpias, estado: estadoPublico() };
   }
   if (metodo === 'POST' && p === '/api/deshacer-reglas') {
     if (!M.historialReglas.length) throw err(409, 'No hay cambios de reglas para deshacer');
     await cambiar(REGLAS, M.historialReglas.pop());
-    await compilarTodo();
     return { reglas: leerReglas(), estado: estadoPublico() };
   }
   if (metodo === 'PUT' && p === '/api/capitulo') {
@@ -319,13 +314,10 @@ export async function api(ruta, opts = {}) {
     const ruta = LIMPIAS + d.archivo, actual = leerTexto(ruta) ?? '';
     if (d.huella && (await huella(enc.encode(actual))).slice(0, 16) !== d.huella) throw err(409, 'Este capítulo cambió en otra pestaña desde que lo abriste. Vuelve a cargarlo antes de guardar.');
     await cambiar(ruta, enc.encode(d.texto));
-    const r = await compilarTodo();
-    const malos = await desconocidos(d.texto);
-    const out = { huella: (await huella(enc.encode(d.texto))).slice(0, 16), desconocidos: malos, estado: estadoPublico() };
-    if (!r.ok) { M.estado.error = r.errores; out.estado = estadoPublico(); out.aviso = 'Guardado, pero el documento no compila: revisa el detalle arriba.'; }
-    return out;
+    M.estado.palabras = contarPalabras();
+    return { huella: (await huella(enc.encode(d.texto))).slice(0, 16), desconocidos: await desconocidos(d.texto), estado: estadoPublico() };
   }
-  if (metodo === 'POST' && p === '/api/compilar') { const r = await compilarTodo(); if (!r.ok) M.estado.error = r.errores; return estadoPublico(); }
+  if (metodo === 'POST' && p === '/api/compilar') { const r = await compilarTodo(); M.estado.error = r.ok ? null : r.errores; return estadoPublico(); }
   if (metodo === 'POST' && p === '/api/exportar') { if (!M.pdf) throw err(409, 'Todavía no hay un PDF compilado'); return { bytes: M.pdf.byteLength }; }
   if (metodo === 'POST' && p === '/api/imagenes') {
     const f = opts.body?.get?.('archivo'); if (!f) throw err(400, 'no venía ningún archivo');

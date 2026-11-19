@@ -78,8 +78,8 @@
 },
 {
 "ruta": "/diagramacion/editor/reglas.json",
-"bytes": 3,
-"huella": "5f36b2ea2906"
+"bytes": 43,
+"huella": "be3e1881b66c"
 },
 {
 "ruta": "/diagramacion/figs-diagramas/ambitos.svg",
@@ -338,8 +338,8 @@
 },
 {
 "ruta": "/diagramacion/limpias/01-introduccion.md",
-"bytes": 16322,
-"huella": "d55e453b108c"
+"bytes": 15390,
+"huella": "aac6f8e8fa21"
 },
 {
 "ruta": "/diagramacion/limpias/02-marco-teorico.md",
@@ -353,13 +353,13 @@
 },
 {
 "ruta": "/diagramacion/limpias/03-fundamentacion-problematica.md",
-"bytes": 13597,
-"huella": "f51efded4e4e"
+"bytes": 13106,
+"huella": "4c26ef4ad121"
 },
 {
 "ruta": "/diagramacion/limpias/04-descripcion-proyecto.md",
-"bytes": 11839,
-"huella": "1a85f5bc5705"
+"bytes": 11598,
+"huella": "7851798dc511"
 },
 {
 "ruta": "/diagramacion/limpias/05-objetivos.md",
@@ -373,8 +373,8 @@
 },
 {
 "ruta": "/diagramacion/limpias/07-proceso-diseno.md",
-"bytes": 18393,
-"huella": "724e19414906"
+"bytes": 18171,
+"huella": "a69a8f9613d2"
 },
 {
 "ruta": "/diagramacion/limpias/08-gestion-estrategica.md",
@@ -388,8 +388,8 @@
 },
 {
 "ruta": "/diagramacion/limpias/10-metodologia.md",
-"bytes": 14016,
-"huella": "06e30dd13bc1"
+"bytes": 13612,
+"huella": "e939d4828a26"
 },
 {
 "ruta": "/diagramacion/limpias/11-referencias.md",

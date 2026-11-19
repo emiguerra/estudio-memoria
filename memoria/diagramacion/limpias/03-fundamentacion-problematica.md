@@ -41,15 +41,11 @@ clasificación facial. En reconocimiento de voz, Koenecke et al. (2020) encontra
 de error de 0,35 en hablantes afroamericanos frente a 0,19 en hablantes blancos, casi el
 doble, atribuible al modelo acústico y no al vocabulario.
 
-Estas fallas
-fueron medidas con rigor académico, publicadas y ampliamente cubiertas por prensa. Y sin
-embargo, agencias gubernamentales como Immigration and Customs Enforcement en Estados
-Unidos continúan desplegando estos mismos sistemas para decidir a quién detener, mientras
-el margen de error documentado sigue sin corregirse. A diferencia del desconocimiento del
-usuario, medido en Chile con datos nacionales precisos, no se encontró evidencia de
-investigación de alcance nacional sobre sesgo algorítmico medido en sistemas chilenos. Lejos de
-tranquilizar, esa ausencia indica que este segundo eje del problema recibe
-mucha menos auditoría que el primero.
+Estas fallas fueron medidas, publicadas y cubiertas por prensa, y aun así agencias como
+Immigration and Customs Enforcement en Estados Unidos siguen desplegando estos sistemas para
+decidir a quién detener. En Chile, a diferencia del desconocimiento del usuario, no se
+encontró investigación de alcance nacional sobre sesgo algorítmico, y esa ausencia indica
+que este segundo eje del problema recibe mucha menos auditoría que el primero.
 
 ### Aristas del problema
 
@@ -103,11 +99,10 @@ buena parte de las cifras internacionales disponibles.
 | · es muy complicado técnicamente | 22% |
 | · creo que igual me van a rastrear | 16% |
 
-El 67% declara consciencia alta o máxima sobre la recopilación de sus datos, y aun así el
-61% acepta los términos sin leerlos. Casi la mitad nombra la resignación como su respuesta
-emocional principal. El hallazgo más preciso es el 77%, porque muestra que lo que frena a las personas es la
-desorientación, más que la indiferencia. No hay ningún punto de entrada al problema que la persona pueda habitar, y
-ese es el lugar que este proyecto busca ocupar.
+Dos de cada tres declaran consciencia alta y aun así la mayoría acepta los términos sin
+leerlos. El hallazgo más preciso es el 77%, porque muestra que lo que frena a las personas
+es la desorientación, más que la indiferencia: no hay ningún punto de entrada al problema
+que la persona pueda habitar, y ese es el lugar que este proyecto busca ocupar.
 
 ### La resignación en la literatura
 
@@ -174,10 +169,9 @@ diseño crítico.
 Como muestran Dunne y Raby (2013), el diseño puede operar como medio para
 hacer tangibles ideas que de otro modo permanecen abstractas; y como demuestra Fried
 (2005), esa tangibilidad solo genera agencia cuando el artefacto funciona de verdad, más allá de
-representar. La pertinencia disciplinar de este proyecto está en que el diseño es la única práctica que puede hacer cuatro
-cosas al mismo tiempo: criticar, construir, probar con rigor técnico y hacer sentir, con un usuario real como destinatario y no como espectador. Agregar
-información al problema no tendría ese efecto. Con el formato final del proyecto, eso
-es todavía más literal: el usuario dejó de ser un visitante de sala y pasó a ser alguien en
+representar. Por eso el diseño puede hacer cuatro cosas a la vez: criticar, construir,
+probar y hacer sentir, con un usuario real como destinatario y no como espectador. Con el
+formato final del proyecto, eso es todavía más literal: el usuario dejó de ser un visitante de sala y pasó a ser alguien en
 su propia vida.
 
 ### Por qué ahora

@@ -65,27 +65,17 @@ la magnitud del fenómeno.
 ## Antecedentes: el cuerpo digital como territorio en disputa
 
 <!-- fig:ejes -->
-Antes de abordar los marcos conceptuales que fundamentan esta investigación, resulta
-necesario situar el problema en casos concretos y verificables que demuestren que la
-extracción invisible de datos, y la impunidad del error algorítmico incluso cuando se mide y se
-prueba, ya operan en el presente como condiciones concretas. Los cinco casos
-que se presentan a continuación se organizan en dos ejes. Los primeros tres (Johatsu,
-Clearview AI, Anthropic-Chile) evidencian, desde ángulos y escalas distintas, la misma tensión
-estructural: la ausencia de estímulo sensorial como condición de eficacia del poder sobre el
-cuerpo digital. Los dos últimos (Gender Shades, Amazon Halo) evidencian una tensión distinta
-y complementaria: que incluso cuando el error deja de ser invisible, medirlo y publicarlo no
-garantiza que se corrija ni que se detenga su uso.
-Los tres primeros casos se ordenan siguiendo una lógica narrativa guiada. El primero parte de
-la experiencia individual y voluntaria: personas que intentan recuperar soberanía sobre su
-existencia borrando su huella. El segundo demuestra por qué ese intento fracasa: el dato
-biométrico más corporal, el rostro, ya fue extraído sin que lo supieran. El tercero aterriza el
-problema en Chile, en 2026, bajo una narrativa de bien común que hace la extracción todavía
-más imperceptible. Los dos casos siguientes invierten el eje: el cuarto muestra que ni siquiera
-la medición rigurosa y pública del error basta para detener su uso; el quinto muestra que ese
-mismo patrón persiste incluso cuando es la propia persona, y no un tercero institucional,
-quien elige el instrumento que termina midiendo mal. Juntos, los cinco casos construyen el
-argumento que el marco teórico desarrollará conceptualmente. Lo que no se siente no puede
-confrontarse ni recuperarse. Y lo que se mide y se prueba tampoco se corrige por sí solo.
+Antes del marco conceptual, cinco casos verificables sitúan el problema en el presente y se
+organizan en dos ejes. Los tres primeros (Johatsu, Clearview AI, Anthropic-Chile) evidencian,
+desde escalas distintas, la misma tensión estructural: la ausencia de estímulo sensorial como
+condición de eficacia del poder sobre el cuerpo digital. El primero parte de quien intenta
+borrar su huella por voluntad propia; el segundo muestra por qué ese intento fracasa, porque
+el rostro ya fue extraído sin que lo supiera; el tercero aterriza el problema en Chile, en 2026,
+bajo una narrativa de bien común que vuelve la extracción todavía más imperceptible. Los dos
+últimos (Gender Shades, Amazon Halo) invierten el eje: incluso cuando el error deja de ser
+invisible, medirlo y publicarlo no garantiza que se corrija ni que se detenga su uso. Lo que no
+se siente no puede confrontarse ni recuperarse. Y lo que se mide y se prueba tampoco se
+corrige por sí solo.
 
 ### Caso 1. Johatsu: el deseo de desaparecer y la trampa del dato
 El fenómeno cuenta con una infraestructura de apoyo propia. Existen empresas

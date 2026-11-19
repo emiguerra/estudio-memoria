@@ -11,9 +11,7 @@ con consentimiento declarado y aceptado, y después la desmonta frente a ellos.
 rastro es diseño crítico del presente. Donde el diseño especulativo imagina futuros para
 advertir, rastro trabaja sobre la extracción que ya ocurre en cada teléfono y la vuelve
 perceptible. Es, en los términos de DiSalvo (2012), diseño adversarial: pone en escena el
-conflicto que los sistemas de datos mantienen fuera de vista y lo vuelve disputable. Su soporte
-es el teléfono que la persona ya carga; su desenlace, el expediente que le devuelve. Ninguna
-sala, ningún objeto de galería.
+conflicto que los sistemas de datos mantienen fuera de vista y lo vuelve disputable.
 
 ## 4.0 De la instalación a la aplicación
 
@@ -45,8 +43,7 @@ condición que hace que el dato valga.
 El cambio también responde a una conclusión del Estado del arte: la experiencia corporal que
 producen Bilal, Lozano-Hemmer y Forensic Architecture *«depende de condiciones de recepción
 que el usuario común no habita»*. Una sala de galería es exactamente una de esas
-condiciones; el teléfono propio, no. El paso a la aplicación resolvió un límite que la
-revisión de referentes ya había diagnosticado.
+condiciones; el teléfono propio, no.
 
 ## 4.1 Fase 01. La semana
 

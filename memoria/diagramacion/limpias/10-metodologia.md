@@ -24,7 +24,7 @@ instrumentos que siguen captura eso por sí solo.
 
 ## 10.1 Enfoque: evaluación formativa (FEDS)
 
-rastro se evalúa con un testeo **formativo**. Su propósito es decidir el siguiente prototipo a partir de datos observados. Gaver (2012)
+rastro se evalúa con un testeo **formativo**. Gaver (2012)
 sostiene que lo que produce la investigación por diseño son artefactos y el relato de su
 desarrollo, lejos de la teoría falsable de las ciencias. Por eso la hipótesis orienta el diseño y
 este capítulo evalúa el artefacto, que son dos operaciones distintas.
@@ -115,9 +115,6 @@ de diseño (Fetters et al., 2013):
  captura el sentir. Fetters et al. (2013) indican, ante la discordancia, re-examinar los
  datos, recoger más o cuestionar el constructo. Eso define el siguiente prototipo.
 
-Cada fila del *joint display* se traduce en una decisión de diseño que afina el artefacto,
-sin pretender probar la hipótesis.
-
 ## 10.5 Muestra y terreno
 
 **Muestra:** se previó un grupo de seis o siete personas mayores de edad que no
@@ -131,11 +128,10 @@ cada persona y desbloqueada por su biometría, dentro de un evento colectivo.
 
 ## 10.6 Criterios de decisión
 
-Se fijan antes de la primera sesión, se cuentan persona por persona y no se cambian
-una vez iniciado el test. Fijarlos de antemano es lo que impide leer los resultados a
-conveniencia. El umbral del cuerpo está fijado: el giro ocurrió si la persona marca 7 o más
-en la escala de 0 a 10 de cuánto sintió en el cuerpo. Se fijó el 8 de noviembre de 2026,
-antes de la primera sesión.
+Se fijaron el 8 de noviembre de 2026, antes de la primera sesión, se cuentan persona por
+persona y no se cambian una vez iniciado el test: fijarlos de antemano impide leer los
+resultados a conveniencia. El giro ocurrió si la persona marca 7 o más en la escala de 0 a
+10 de cuánto sintió en el cuerpo.
 
 | Eje | Si ocurre esto | Se decide esto |
 |---|---|---|
@@ -151,12 +147,11 @@ estudio hasta el desengaño.
 
 <!-- fig:eva -->
 
-**El cuerpo reaccionó en la mayoría.** Tres de los cinco superaron el umbral fijado de
-antemano, que era marcar 7 o más en la escala de 0 a 10 de cuánto se sintió en el cuerpo:
-dos marcaron 8 y uno 7. Los otros dos quedaron bajo el umbral, uno cerca de 6 y otro en 2. La observación
+**El cuerpo reaccionó en la mayoría.** Tres de los cinco superaron el umbral de 7: dos
+marcaron 8 y uno 7. Los otros dos quedaron bajo el umbral, uno cerca de 6 y otro en 2. La observación
 directa lo confirma antes que la escala: tensión, manos y cara tocadas, respiración
-agitada, un «shock» anotado en vivo. El umbral se cumplió en la mayoría, así que el cierre simbólico, es decir, la lectura de rostro y el expediente impreso, no
-necesita rehacerse.
+agitada, un «shock» anotado en vivo. Con el umbral cumplido en la mayoría, el cierre simbólico (la lectura de rostro y el
+expediente impreso) no necesita rehacerse.
 
 <!-- fig:foto-medicion -->
 
