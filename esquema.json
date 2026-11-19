@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "secciones": [
+    {
+      "id": "pagina",
+      "nombre": "Página",
+      "reglas": [
+        { "id": "margen_sup_texto", "nombre": "Línea de inicio del texto", "tipo": "numero", "unidad": "pt", "min": 90, "max": 300, "paso": 5, "defecto": 160,
+          "ayuda": "Altura donde parte el texto en todas las páginas de contenido, haya título o no." },
+        { "id": "margen_inf", "nombre": "Margen inferior", "tipo": "numero", "unidad": "pt", "min": 60, "max": 200, "paso": 5, "defecto": 90,
+          "ayuda": "Espacio libre al pie, sobre el folio." },
+        { "id": "margen_lat", "nombre": "Margen lateral del texto", "tipo": "numero", "unidad": "pt", "min": 150, "max": 560, "paso": 10, "defecto": 390,
+          "ayuda": "Margen izquierdo y derecho de las páginas de texto. Más chico = columnas más anchas." },
+        { "id": "medianil", "nombre": "Medianil entre columnas", "tipo": "numero", "unidad": "pt", "min": 20, "max": 150, "paso": 5, "defecto": 50,
+          "ayuda": "Separación entre las dos columnas de texto." }
+      ]
+    },
+    {
+      "id": "tipografia",
+      "nombre": "Tipografía",
+      "reglas": [
+        { "id": "fuente_titulos", "nombre": "Familia de títulos y permanentes", "tipo": "opcion", "defecto": "Martian Mono",
+          "opciones": ["Martian Mono", "JetBrains Mono", "IBM Plex Mono", "Space Mono", "Google Sans Code", "Syne"],
+          "ayuda": "Títulos, rótulos, folios y códigos de expediente." },
+        { "id": "fuente_cuerpo", "nombre": "Familia del cuerpo de texto", "tipo": "opcion", "defecto": "JetBrains Mono",
+          "opciones": ["JetBrains Mono", "IBM Plex Mono", "Martian Mono", "Space Mono", "Google Sans Code", "IBM Plex Sans"],
+          "ayuda": "Texto corrido de todos los capítulos." },
+        { "id": "cuerpo", "nombre": "Tamaño del cuerpo", "tipo": "numero", "unidad": "pt", "min": 14, "max": 28, "paso": 0.5, "defecto": 20,
+          "ayuda": "Tamaño del texto corrido." },
+        { "id": "interlineado", "nombre": "Interlineado", "tipo": "numero", "unidad": "pt", "min": 4, "max": 24, "paso": 1, "defecto": 10,
+          "ayuda": "Aire entre líneas de un mismo párrafo." },
+        { "id": "linea_base", "nombre": "Espacio entre párrafos", "tipo": "numero", "unidad": "pt", "min": 14, "max": 50, "paso": 1, "defecto": 30,
+          "ayuda": "Línea base del sistema: separa párrafos y rige el ritmo vertical." },
+        { "id": "titulo_h2", "nombre": "Tamaño de títulos (##)", "tipo": "numero", "unidad": "pt", "min": 16, "max": 48, "paso": 1, "defecto": 26,
+          "ayuda": "Títulos de sección dentro del texto, como «3.1 Problemática»." },
+        { "id": "titulo_h3", "nombre": "Tamaño de subtítulos (###)", "tipo": "numero", "unidad": "pt", "min": 14, "max": 36, "paso": 1, "defecto": 20,
+          "ayuda": "Subtítulos, como «Flujo de alta»." },
+        { "id": "pie", "nombre": "Tamaño de pies de figura", "tipo": "numero", "unidad": "pt", "min": 11, "max": 22, "paso": 0.5, "defecto": 15,
+          "ayuda": "«FIGURA NN», su título y su fuente." },
+        { "id": "tabla", "nombre": "Tamaño del texto de tablas", "tipo": "numero", "unidad": "pt", "min": 14, "max": 28, "paso": 0.5, "defecto": 21,
+          "ayuda": "Texto dentro de las láminas de tabla APA." }
+      ]
+    },
+    {
+      "id": "color",
+      "nombre": "Color",
+      "reglas": [
+        { "id": "papel", "nombre": "Papel (fondo claro)", "tipo": "color", "defecto": "#FBFBF8", "ayuda": "Fondo de las páginas de texto." },
+        { "id": "negro", "nombre": "Negro expediente", "tipo": "color", "defecto": "#121210", "ayuda": "Fondo de portadillas, láminas y diagramas." },
+        { "id": "lima", "nombre": "Lima (resaltado)", "tipo": "color", "defecto": "#C8F31D", "ayuda": "Resaltado de títulos y de citas." },
+        { "id": "verde", "nombre": "Verde señal", "tipo": "color", "defecto": "#8FE000", "ayuda": "Acento único del sistema." },
+        { "id": "verde_texto", "nombre": "Verde para texto chico", "tipo": "color", "defecto": "#6FA300", "ayuda": "Rótulos verdes sobre fondo claro." },
+        { "id": "tinta_clara", "nombre": "Texto sobre papel", "tipo": "color", "defecto": "#1A1A15", "ayuda": "Color del cuerpo de texto." },
+        { "id": "tinta_oscura", "nombre": "Texto sobre negro", "tipo": "color", "defecto": "#ECECE2", "ayuda": "Texto en páginas oscuras." },
+        { "id": "tenue_claro", "nombre": "Secundario sobre papel", "tipo": "color", "defecto": "#8C8A7C", "ayuda": "Folios, fuentes y notas." },
+        { "id": "tenue_oscuro", "nombre": "Secundario sobre negro", "tipo": "color", "defecto": "#7E7E72", "ayuda": "Notas en páginas oscuras." }
+      ]
+    },
+    {
+      "id": "flujo",
+      "nombre": "Flujo y equilibrio",
+      "reglas": [
+        { "id": "equilibrar", "nombre": "Equilibrar la última página", "tipo": "si_no", "defecto": true,
+          "ayuda": "Reparte parejo entre las dos columnas el texto de la última página de cada tramo." },
+        { "id": "minimo_ultima", "nombre": "Texto mínimo en la última página", "tipo": "numero", "unidad": "col", "min": 0, "max": 1, "paso": 0.05, "defecto": 0.5,
+          "ayuda": "Fracción de una columna. Si la última página quedaría con menos, se traen frases de la anterior." },
+        { "id": "titulos_ancho_completo", "nombre": "Títulos que abren página a ancho completo", "tipo": "si_no", "defecto": true,
+          "ayuda": "Un título al inicio de página cruza las dos columnas y ambas parten a la altura del párrafo." },
+        { "id": "palabras_laminas", "nombre": "Texto antes de soltar las láminas", "tipo": "numero", "unidad": "palabras", "min": 0, "max": 1500, "paso": 20, "defecto": 420,
+          "ayuda": "Si entre dos láminas hay menos texto que esto, el texto sigue corriendo y las láminas esperan. 0 = cada lámina va donde se nombra." },
+        { "id": "arrastre_titulo", "nombre": "Título que pasa después de la lámina", "tipo": "numero", "unidad": "palabras", "min": 0, "max": 400, "paso": 10, "defecto": 150,
+          "ayuda": "Si un título queda con menos texto que esto justo antes de una lámina, pasa con su texto al otro lado." }
+      ]
+    },
+    {
+      "id": "texto",
+      "nombre": "Texto",
+      "reglas": [
+        { "id": "rastro_destacado", "nombre": "«rastro» en negrita cursiva", "tipo": "si_no", "defecto": true,
+          "ayuda": "Cada vez que el texto nombra el proyecto. El uso común de la palabra no se marca." },
+        { "id": "citas_destacadas", "nombre": "Citas APA resaltadas", "tipo": "si_no", "defecto": true,
+          "ayuda": "Resalta en lima las citas, como (Autor, 2024) y Autor (2024)." }
+      ]
+    },
+    {
+      "id": "figuras",
+      "nombre": "Figuras",
+      "reglas": [
+        { "id": "marco_ventana", "nombre": "Marco de ventana en las fotos", "tipo": "si_no", "defecto": true,
+          "ayuda": "Barra de visor con el nombre del archivo sobre cada fotografía." }
+      ]
+    }
+  ]
+}
