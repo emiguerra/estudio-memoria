@@ -1,0 +1,188 @@
+[
+ {
+  "id": "ejes",
+  "nombre": "Los cinco casos organizados en dos ejes",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "clearview",
+  "nombre": "Clearview AI: 30.000 millones de imágenes y 3.100 agencias",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "ambitos",
+  "nombre": "Intersección de los tres ámbitos del marco teórico",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "red",
+  "nombre": "Red del marco teórico y los referentes",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "encuesta",
+  "nombre": "Resignación informada en la muestra propia (N=49)",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "anatomia",
+  "nombre": "Anatomía del expediente",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "arquitecturas",
+  "nombre": "Las tres arquitecturas del proyecto",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "hitos",
+  "nombre": "Línea de hitos",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "timeline",
+  "nombre": "Fases del estudio",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "eva",
+  "nombre": "Reacción corporal (EVA) por participante",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "sorpresa",
+  "nombre": "Mapa de sorpresa del desengaño",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "emociones",
+  "nombre": "Mapa de lo que sintieron",
+  "grupo": "Diagramas",
+  "lado": true
+ },
+ {
+  "id": "arbol",
+  "nombre": "Árbol de problemas",
+  "grupo": "Diagramas",
+  "lado": false
+ },
+ {
+  "id": "identidad",
+  "nombre": "Identidad visual (3 láminas)",
+  "grupo": "Identidad",
+  "lado": false
+ },
+ {
+  "id": "app-bereal",
+  "nombre": "BeReal → rastro",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-arquitectura",
+  "nombre": "Arquitectura de información",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-onboarding",
+  "nombre": "Flujo de alta",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-captura",
+  "nombre": "Flujo de captura diaria",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-recuerdos",
+  "nombre": "Flujo de Recuerdos",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-esquemas",
+  "nombre": "Esquemas de pantalla",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-pantallas",
+  "nombre": "Pantallas finales",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-icono",
+  "nombre": "Ícono",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-sistema",
+  "nombre": "Sistema implementado",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "app-distribucion",
+  "nombre": "Distribución",
+  "grupo": "Aplicación",
+  "lado": false
+ },
+ {
+  "id": "foto-expedientes",
+  "nombre": "Los expedientes",
+  "grupo": "Fotos del testeo",
+  "lado": false
+ },
+ {
+  "id": "foto-panel",
+  "nombre": "El panel de rastro",
+  "grupo": "Fotos del testeo",
+  "lado": false
+ },
+ {
+  "id": "foto-escaner",
+  "nombre": "Escáner y monitor",
+  "grupo": "Fotos del testeo",
+  "lado": false
+ },
+ {
+  "id": "foto-impresion",
+  "nombre": "La impresora térmica",
+  "grupo": "Fotos del testeo",
+  "lado": false
+ },
+ {
+  "id": "foto-medicion",
+  "nombre": "La medición",
+  "grupo": "Fotos del testeo",
+  "lado": false
+ },
+ {
+  "id": "foto-entrevista",
+  "nombre": "Entrevista y registro",
+  "grupo": "Fotos del testeo",
+  "lado": false
+ },
+ {
+  "id": "foto-mon",
+  "nombre": "Expediente 07 · Mon",
+  "grupo": "Fotos del testeo",
+  "lado": false
+ }
+]

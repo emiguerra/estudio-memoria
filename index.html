@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estudio memoria · rastro</title>
+<!--
+  Editor de la memoria de rastro, versión web. Typst corre en el navegador (web/motor.js)
+  sobre la memoria publicada en memoria/; lo que se edita queda en este navegador como
+  «cambios» y se baja como .zip para llevarlo a la carpeta local. Ver ROAST.md.
+  Interfaz en la línea de los tools de Brik: claro, lienzo con guías, controles en acordeón.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --blanco: #fafafa; --papel: #fff; --g1: #f2f2f2; --g2: #e8e8e8; --g3: #bfbfbf; --g4: #999; --g5: #636363; --g6: #424242;
+    --negro: #1a1a1a; --linea: #e6e6e6; --linea-panel: #e1e1e1; --guia: #e8e8e8;
+    --etq: #686868; --tenue: #888; --hover: #f5f5f5;
+    --azul: #193ef9; --azul-osc: #2944cc; --azul-claro: #e5eaff; --azul-tinta: #493dcc;
+    --rojo: #c72c2c; --rojo-claro: #ffe5e5; --ambar: #f57700; --ambar-claro: #fff5eb; --verde: #27ce64;
+    --sans: "Geist", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    --mono: "Geist Mono", ui-monospace, Menlo, monospace;
+    --col: 128px;           /* columna fija de los controles, como en Brik */
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--blanco); color: var(--negro); font: 400 12px/1.3 var(--sans); letter-spacing: -.01em;
+         display: grid; grid-template-rows: 48px minmax(0, 1fr); overflow: hidden; -webkit-font-smoothing: antialiased; }
+  button, input, select, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--azul); outline-offset: 1px; }
+  svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: square; flex: none; }
+
+  /* ── barra superior en celdas ─────────────────────── */
+  .barra { display: flex; align-items: stretch; border-bottom: 1px solid var(--linea); background: var(--blanco); min-width: 0; }
+  .barra > * { display: flex; align-items: center; }
+  .logo { width: 48px; justify-content: center; border-right: 1px solid var(--linea); }
+  .logo span { width: 18px; height: 18px; border: 1.5px solid var(--negro); display: grid; place-items: center; font: 500 10px var(--mono); }
+  .titulo { padding: 0 16px; gap: 6px; white-space: nowrap; font-size: 14px; }
+  .titulo small { color: var(--tenue); font-size: 10px; }
+  .titulo b { font-weight: 500; font-style: italic; }
+  .metricas { margin-left: auto; }
+  .chip { height: 100%; display: flex; align-items: center; gap: 4px; padding: 0 16px; border-left: 1px solid var(--linea);
+          color: var(--etq); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .chip b { color: var(--negro); font-weight: 500; }
+  .chip.mal, .chip.mal b { color: var(--rojo); } .chip.mal { background: var(--rojo-claro); }
+  .chip.ojo, .chip.ojo b { color: var(--ambar); } .chip.ojo { background: var(--ambar-claro); }
+  .estado { gap: 8px; padding: 0 16px; border-left: 1px solid var(--linea); color: var(--etq); white-space: nowrap; min-width: 0; }
+  .estado #estado-txt { overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+  .punto { width: 7px; height: 7px; background: var(--verde); flex: none; }
+  .estado.trabajando .punto { background: var(--ambar); animation: latir 1s infinite; }
+  .estado.error { color: var(--rojo); cursor: pointer; background: var(--rojo-claro); } .estado.error .punto { background: var(--rojo); }
+  @keyframes latir { 50% { opacity: .25; } }
+  .celda { border: 0; border-left: 1px solid var(--linea); background: transparent; padding: 0 22px; gap: 8px; font-size: 14px; white-space: nowrap; }
+  .celda:hover:not(:disabled) { background: var(--hover); }
+  .celda.azul { background: var(--azul); color: #fff; border-left-color: var(--azul); padding: 0 28px; }
+  .celda.azul:hover:not(:disabled) { background: var(--azul-osc); }
+  .celda:disabled { opacity: .5; cursor: default; }
+
+  /* ── cuerpo: riel · panel · lienzo ──────────────────── */
+  .cuerpo { display: grid; grid-template-columns: 48px var(--ancho-panel, 380px) minmax(0, 1fr); min-height: 0; transition: grid-template-columns .25s; }
+  .cuerpo[data-tab="texto"] { --ancho-panel: 560px; }
+  .cuerpo[data-tab="laminas"], .cuerpo[data-tab="imagenes"] { --ancho-panel: 440px; }
+  .riel { border-right: 1px solid var(--linea); display: flex; flex-direction: column; background: var(--blanco); }
+  .riel button { height: 50px; border: 0; border-bottom: 1px solid var(--linea); background: transparent; color: var(--g4);
+                 display: grid; place-items: center; position: relative; }
+  .riel button svg.i { width: 18px; height: 18px; }
+  .riel button:hover { color: var(--negro); background: var(--hover); }
+  .riel button[aria-selected="true"] { color: var(--azul); }
+  .riel button[aria-selected="true"]::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--azul); }
+  .riel button .tip { position: absolute; left: calc(100% + 6px); top: 50%; transform: translateY(-50%); background: var(--negro); color: #fff;
+                      font-size: 11px; padding: 4px 8px; border-radius: 4px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .12s; z-index: 5; }
+  .riel button:hover .tip, .riel button:focus-visible .tip { opacity: 1; }
+
+  .panel { border-right: 1px solid var(--linea); display: grid; grid-template-rows: 50px minmax(0, 1fr); min-height: 0; background: var(--blanco); }
+  .panel-cab { display: flex; align-items: center; gap: 8px; padding: 0 12px 0 16px; border-bottom: 1px solid var(--linea); font-size: 14px; }
+  .panel-cab .ic-btn { margin-left: auto; }
+  .ic-btn { width: 28px; height: 28px; border: 0; background: transparent; display: grid; place-items: center; color: var(--negro); border-radius: 4px; }
+  .ic-btn:hover { background: var(--g1); }
+  .contenido { overflow-y: auto; min-height: 0; padding-bottom: 40px; scrollbar-width: thin; }
+  .ayuda { color: var(--tenue); font-size: 11px; margin: 0; padding: 12px 16px 4px; line-height: 1.4; }
+
+  /* acordeón de reglas */
+  details.sec { position: relative; padding: 0; }
+  details.sec::before { content: ""; position: absolute; top: 0; left: 12px; right: 12px; height: 1px; background: var(--linea-panel); }
+  details.sec:first-child::before { display: none; }
+  details.sec > summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center;
+                          padding: 20px 16px; font-size: 14px; }
+  details.sec > summary::-webkit-details-marker { display: none; }
+  details.sec > summary::after { content: ""; width: 6px; height: 6px; border-right: 1.2px solid var(--g4); border-bottom: 1.2px solid var(--g4);
+                                 transform: rotate(-45deg); transition: transform .2s; }
+  details.sec[open] > summary { padding-bottom: 12px; }
+  details.sec[open] > summary::after { transform: rotate(45deg) translate(-2px, -2px); }
+  details.sec > summary .cuenta { margin-left: 8px; margin-right: auto; color: var(--azul-tinta); font-size: 11px; }
+  details.sec[open] { padding-bottom: 14px; }
+
+  .ctl { padding: 0 12px 0 16px; }
+  .ctl .fila { display: flex; align-items: center; gap: 10px; min-height: 30px; }
+  .ctl label { flex: 1 1 0; min-width: 0; color: var(--etq); line-height: 1.25; padding: 4px 0; cursor: default; }
+  .ctl label .u { color: var(--g4); }
+  .ctl.cambiado label { color: var(--azul-tinta); }
+  .ctl .campo-ctl { flex: none; width: 150px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+  .ctl .reset { width: 18px; height: 18px; border: 0; background: none; color: var(--g4); padding: 0; display: grid; place-items: center; visibility: hidden; flex: none; }
+  .ctl .reset:hover { color: var(--negro); }
+  .ctl.cambiado .reset { visibility: visible; }
+  .ctl .desc { color: var(--tenue); font-size: 11px; line-height: 1.35; margin: 0; max-height: 0; overflow: hidden; opacity: 0; transition: max-height .25s, opacity .2s, margin .25s; }
+  .ctl:hover .desc, .ctl:focus-within .desc { max-height: 60px; opacity: 1; margin: 2px 0 6px; }
+
+  /* deslizador: pista fina, relleno gris, tirador negro rectangular */
+  input[type=range] { -webkit-appearance: none; appearance: none; flex: 1; min-width: 0; height: 16px; background: transparent; margin: 0; cursor: pointer; --p: 50%; }
+  input[type=range]::-webkit-slider-runnable-track { height: 4px; background: linear-gradient(var(--g5), var(--g5)) 0 / var(--p) 100% no-repeat, var(--g2); }
+  input[type=range]::-moz-range-track { height: 4px; background: var(--g2); }
+  input[type=range]::-moz-range-progress { height: 4px; background: var(--g5); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 6px; height: 14px; background: var(--negro); border: 0; border-radius: 0; margin-top: -5px; }
+  input[type=range]::-moz-range-thumb { width: 6px; height: 14px; background: var(--negro); border: 0; border-radius: 0; }
+  input[type=range]:hover::-webkit-slider-thumb { background: var(--azul); }
+  .ctl input[type=number] { width: 40px; flex: none; height: 22px; background: var(--g1); border: 0; border-radius: 2px; padding: 0 3px;
+                            text-align: center; font-size: 11px; font-variant-numeric: tabular-nums; -moz-appearance: textfield; }
+  .ctl input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .ctl input[type=number]:focus { background: var(--azul-claro); outline: none; }
+  .ctl select, .campo { width: 100%; height: 26px; background: var(--g2); border: 0; border-radius: 2px; padding: 0 22px 0 8px; font-size: 11px;
+                        -webkit-appearance: none; appearance: none;
+                        background-image: linear-gradient(45deg, transparent 50%, var(--negro) 50%), linear-gradient(-45deg, transparent 50%, var(--negro) 50%);
+                        background-position: right 11px center, right 7px center; background-size: 4px 4px; background-repeat: no-repeat; }
+  input.campo { background-image: none; padding-right: 8px; font-size: 12px; height: 30px; background: var(--g1); }
+  input.campo:focus { background: var(--azul-claro); outline: none; }
+  .ctl .color { display: flex; align-items: center; gap: 6px; width: 100%; height: 26px; background: var(--g1); border-radius: 2px; padding: 0 6px 0 3px; }
+  .ctl input[type=color] { width: 20px; height: 20px; border: 0; padding: 0; background: none; cursor: pointer; }
+  .ctl input[type=color]::-webkit-color-swatch-wrapper { padding: 0; } .ctl input[type=color]::-webkit-color-swatch { border: 1px solid rgba(0,0,0,.12); border-radius: 1px; }
+  .ctl .color output { font: 11px var(--mono); color: var(--g6); }
+  /* interruptor rectangular, como el de Brik */
+  .interruptor { position: relative; width: 32px; height: 16px; flex: none; }
+  .interruptor input { opacity: 0; width: 100%; height: 100%; position: absolute; margin: 0; cursor: pointer; z-index: 1; }
+  .interruptor span { position: absolute; inset: 0; background: var(--g2); pointer-events: none; transition: background .15s; }
+  .interruptor span::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background: #fff; transition: left .15s; }
+  .interruptor input:checked + span { background: var(--negro); }
+  .interruptor input:checked + span::after { left: 18px; }
+  .interruptor input:focus-visible + span { outline: 2px solid var(--azul); outline-offset: 1px; }
+
+  /* botones dentro del panel */
+  .acciones { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn { height: 32px; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; border: 0; border-radius: 8px;
+         background: var(--g2); color: var(--negro); font-size: 12px; white-space: nowrap; }
+  .btn:hover:not(:disabled) { background: var(--g3); }
+  .btn.verde { background: var(--negro); color: #fff; } .btn.verde:hover:not(:disabled) { background: #2a2a2a; }
+  .btn.chico { height: 28px; padding: 0 10px; font-size: 11px; border-radius: 6px; }
+  .btn.fantasma { background: transparent; box-shadow: inset 0 0 0 1px var(--linea-panel); }
+  .btn.fantasma:hover:not(:disabled) { background: var(--hover); }
+  .btn:disabled { opacity: .4; cursor: default; }
+
+  /* texto */
+  .bloque { padding: 14px 12px 0 16px; display: grid; gap: 10px; }
+  textarea.md { width: 100%; height: calc(100vh - 290px); min-height: 260px; background: var(--g1); border: 0; border-radius: 2px;
+                padding: 12px; font: 12px/1.6 var(--mono); letter-spacing: 0; resize: vertical; tab-size: 2; color: var(--negro); }
+  textarea.md:focus { outline: 1px solid var(--azul); background: #fff; }
+  .aviso { background: var(--ambar-claro); color: #8a4500; border-radius: 2px; padding: 8px 10px; font-size: 11px; line-height: 1.4; }
+  .aviso.mal { background: var(--rojo-claro); color: var(--rojo); }
+  .aviso code { word-break: break-all; font-family: var(--mono); }
+  #avisos-texto:empty { display: none; }
+
+  /* láminas e imágenes: rejilla de tarjetas tipo galería */
+  .grupo { padding: 22px 16px 10px; font-size: 14px; display: flex; justify-content: space-between; align-items: baseline; }
+  .grupo small { color: var(--tenue); font-size: 11px; }
+  .rejilla { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px; padding: 0 12px 0 16px; }
+  .tarjeta { display: grid; gap: 6px; align-content: start; position: relative; }
+  .tarjeta .mini { aspect-ratio: 16 / 9; background: var(--negro) center / contain no-repeat; position: relative; cursor: zoom-in; border: 0; padding: 0; width: 100%;
+                   outline: 1px solid var(--linea-panel); outline-offset: -1px; transition: outline-color .12s; }
+  .tarjeta .mini:hover { outline: 2px solid var(--negro); outline-offset: -2px; }
+  .tarjeta .mini.foto { cursor: pointer; aspect-ratio: 4 / 3; background-size: cover; background-color: var(--g2); }
+  .tarjeta.sel .mini { outline: 3px solid var(--azul); outline-offset: -3px; }
+  .tarjeta .mini .cargando { position: absolute; inset: 0; display: grid; place-items: center; color: var(--g4); font-size: 10px; background: var(--g1); }
+  .tarjeta .info { display: grid; gap: 3px; }
+  .tarjeta .nom { font-size: 12px; line-height: 1.25; }
+  .tarjeta .id { font: 10px var(--mono); color: var(--tenue); word-break: break-all; letter-spacing: 0; }
+  .usos { display: flex; gap: 4px; flex-wrap: wrap; }
+  .usos span { font-size: 10px; padding: 1px 5px; color: var(--tenue); background: var(--g1); }
+  .usos span.en-uso { color: var(--azul-osc); background: var(--azul-claro); }
+  .tarjeta .bts { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+  .check { position: absolute; top: 6px; left: 6px; width: 18px; height: 18px; border: 1.5px solid #fff; background: rgba(0,0,0,.35); display: grid; place-items: center; font-size: 10px; color: #fff; }
+  .tarjeta.sel .check { background: var(--azul); border-color: var(--azul); }
+  .soltar { margin: 14px 12px 4px 16px; border: 1px dashed var(--g3); padding: 22px 14px; text-align: center; color: var(--etq); cursor: pointer; background: var(--papel); line-height: 1.5; }
+  .soltar small { color: var(--tenue); }
+  .soltar:hover, .soltar.encima { border-color: var(--azul); color: var(--azul); background: var(--azul-claro); }
+  .insertar { position: sticky; bottom: -40px; background: var(--blanco); border-top: 1px solid var(--linea); padding: 12px 12px 18px 16px; margin-top: 18px; display: grid; gap: 8px; }
+  .insertar .ayuda { padding: 0; }
+
+  /* ── lienzo con guías, como el artboard de Brik ──────── */
+  .vista { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; background: var(--g1); }
+  .escenario { position: relative; display: grid; place-items: center; min-height: 0; overflow: hidden; container-type: size; }
+  .hoja { position: relative; aspect-ratio: 16 / 9; width: min(100cqw - 96px, (100cqh - 120px) * 16 / 9); background: var(--papel); }
+  .hoja::before, .hoja::after { content: ""; position: absolute; pointer-events: none; }
+  .hoja::before { left: -100vw; right: -100vw; top: -1px; bottom: -1px; border-top: 1px solid var(--guia); border-bottom: 1px solid var(--guia); }
+  .hoja::after { top: -100vh; bottom: -100vh; left: -1px; right: -1px; border-left: 1px solid var(--guia); border-right: 1px solid var(--guia); }
+  .hoja canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; transition: opacity .2s; }
+  .hoja.cargando canvas { opacity: .5; }
+  .tira button canvas { width: 100%; height: 100%; display: block; }
+  .chip.cambios { cursor: pointer; } .chip.cambios b { color: var(--azul); }
+  .bienvenida { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; background: var(--g1); }
+  .bienvenida div { max-width: 440px; text-align: center; color: var(--etq); line-height: 1.5; padding: 0 20px; }
+  .bienvenida b { display: block; color: var(--negro); font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+  .lista-cambios { font: 11px/1.6 var(--mono); max-height: 240px; overflow: auto; background: var(--g1); padding: 8px 10px; margin: 8px 0; letter-spacing: 0; }
+  .hoja .velo { position: absolute; right: 10px; bottom: 10px; font-size: 11px; color: #fff; background: var(--negro); padding: 4px 9px; z-index: 2; }
+  /* barra del artboard: va pegada sobre el borde superior de la hoja */
+  .nav { position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); display: flex; align-items: center; gap: 4px; color: var(--g6); font-size: 11px; z-index: 2; }
+  .nav .ic-btn { width: 22px; height: 22px; }
+  .nav input { width: 34px; height: 22px; background: transparent; border: 0; text-align: right; font-variant-numeric: tabular-nums; padding: 0 2px; }
+  .nav input:hover, .nav input:focus { background: var(--g2); outline: none; }
+  .nav .de { color: var(--g4); margin-right: 6px; }
+  .nav select { field-sizing: content; height: 22px; background: transparent; border: 0; padding: 0 16px 0 4px; max-width: 360px; font-size: 11px; color: var(--g6); -webkit-appearance: none; appearance: none;
+                background-image: linear-gradient(45deg, transparent 50%, var(--g6) 50%), linear-gradient(-45deg, transparent 50%, var(--g6) 50%);
+                background-position: right 7px center, right 3px center; background-size: 4px 4px; background-repeat: no-repeat; text-overflow: ellipsis; }
+  .nav select:hover { background-color: var(--g2); }
+  .nav .atajos { margin-left: auto; color: var(--g4); white-space: nowrap; }
+  .tira { display: flex; gap: 6px; overflow-x: auto; padding: 10px 14px 12px; border-top: 1px solid var(--linea); background: var(--blanco); scroll-behavior: smooth; scrollbar-width: thin; }
+  .tira button { flex: none; width: 88px; aspect-ratio: 16 / 9; padding: 0; border: 0; outline: 1px solid var(--linea-panel); outline-offset: -1px;
+                 background: var(--g2) center / cover no-repeat; position: relative; }
+  .tira button:hover { outline: 1px solid var(--negro); }
+  .tira button[aria-current="true"] { outline: 2px solid var(--azul); outline-offset: -2px; }
+  .tira button .n { position: absolute; left: 0; bottom: 0; font-size: 9px; color: #fff; background: rgba(0,0,0,.55); padding: 0 3px; font-variant-numeric: tabular-nums; }
+  .tira .cap { flex: none; writing-mode: vertical-rl; transform: rotate(180deg); font: 500 9px var(--mono); color: var(--azul); padding: 2px 0; border-right: 1px solid var(--azul); }
+
+  /* modal y avisos */
+  dialog { background: var(--blanco); color: var(--negro); border: 1px solid var(--linea-panel); border-radius: 10px; padding: 14px; max-width: min(1100px, 92vw); }
+  dialog::backdrop { background: rgba(242,242,242,.8); backdrop-filter: blur(2px); }
+  dialog img { width: 100%; display: block; }
+  dialog .ayuda { padding: 10px 2px 0; color: var(--etq); }
+  .toast { position: fixed; left: 50%; bottom: 72px; transform: translateX(-50%); background: var(--negro); color: #fff; padding: 10px 16px; border-radius: 8px;
+           font-size: 12px; z-index: 20; box-shadow: 0 8px 30px rgba(0,0,0,.18); max-width: 80vw; }
+  .toast.mal { background: var(--rojo); }
+  ul.errores { margin: 6px 0 0; padding-left: 18px; font-family: var(--mono); font-size: 11px; letter-spacing: 0; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  @media (max-width: 1100px) { .cuerpo, .cuerpo[data-tab] { --ancho-panel: 320px; } .cuerpo[data-tab="texto"] { --ancho-panel: 420px; } .nav .atajos, .titulo small { display: none; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ic-reglas" viewBox="0 0 16 16"><path d="M2 4h7M12 4h2M2 8h2M7 8h7M2 12h9M14 12h0"/><rect x="9" y="2.5" width="3" height="3"/><rect x="4" y="6.5" width="3" height="3"/><rect x="11" y="10.5" width="3" height="3"/></symbol>
+  <symbol id="ic-texto" viewBox="0 0 16 16"><path d="M3 3h10M3 6.5h10M3 10h10M3 13.5h6"/></symbol>
+  <symbol id="ic-laminas" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10"/><path d="M2 10l3.5-3 3 2.5L11 7l3 3"/></symbol>
+  <symbol id="ic-imagenes" viewBox="0 0 16 16"><rect x="2" y="4" width="10" height="9"/><path d="M5 2h9v9"/><circle cx="5.5" cy="7.5" r="1"/></symbol>
+  <symbol id="ic-reset" viewBox="0 0 16 16"><path d="M3.5 8a4.5 4.5 0 1 0 1.3-3.2M3.5 2.5v2.5H6"/></symbol>
+  <symbol id="ic-deshacer" viewBox="0 0 16 16"><path d="M5 3.5L2.5 6 5 8.5M2.5 6H10a3.5 3.5 0 0 1 0 7H6"/></symbol>
+  <symbol id="ic-exportar" viewBox="0 0 16 16"><path d="M8 10V2M5 5l3-3 3 3M3 9v5h10V9"/></symbol>
+  <symbol id="ic-izq" viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5"/></symbol>
+  <symbol id="ic-der" viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5"/></symbol>
+</svg>
+
+<header class="barra">
+  <div class="logo" aria-hidden="true"><span>R</span></div>
+  <div class="titulo">estudio memoria <small>de <b>rastro</b></small></div>
+  <div class="metricas" aria-live="polite">
+    <span class="chip" id="m-pag"><b>–</b> páginas</span>
+    <span class="chip" id="m-pal"><b>–</b> palabras</span>
+    <span class="chip" id="m-pdf">PDF <b>–</b></span>
+    <span class="chip cambios" id="m-cambios" hidden title="Lo que editaste en este navegador"></span>
+  </div>
+  <div class="estado" id="estado" role="status" title="Estado de la compilación"><span class="punto"></span><span id="estado-txt">Conectando…</span></div>
+  <button class="celda" id="b-deshacer" title="Volver a las reglas anteriores (⌘Z)"><svg class="i"><use href="#ic-deshacer"/></svg>Deshacer</button>
+  <button class="celda azul" id="b-exportar" title="Compila el PDF final"><svg class="i"><use href="#ic-exportar"/></svg>Exportar PDF</button>
+</header>
+
+<main class="cuerpo">
+  <!-- riel de pestañas -->
+  <nav class="riel" role="tablist" aria-label="Herramientas" aria-orientation="vertical">
+    <button role="tab" id="t-reglas" aria-controls="p-reglas" aria-label="Reglas"><svg class="i"><use href="#ic-reglas"/></svg><span class="tip">Reglas</span></button>
+    <button role="tab" id="t-texto" aria-controls="p-texto" aria-label="Texto"><svg class="i"><use href="#ic-texto"/></svg><span class="tip">Texto</span></button>
+    <button role="tab" id="t-laminas" aria-controls="p-laminas" aria-label="Láminas"><svg class="i"><use href="#ic-laminas"/></svg><span class="tip">Láminas</span></button>
+    <button role="tab" id="t-imagenes" aria-controls="p-imagenes" aria-label="Imágenes"><svg class="i"><use href="#ic-imagenes"/></svg><span class="tip">Imágenes</span></button>
+  </nav>
+
+  <!-- PANEL DE EDICIÓN (izquierda) -->
+  <aside class="panel" aria-label="Edición">
+    <div class="panel-cab"><svg class="i" id="panel-ic"><use href="#ic-reglas"/></svg><span id="panel-tit">Reglas</span>
+      <button class="ic-btn" id="b-restaurar" title="Restaurar todas las reglas" aria-label="Restaurar todas las reglas"><svg class="i"><use href="#ic-reset"/></svg></button></div>
+    <div class="contenido">
+      <section id="p-reglas" role="tabpanel" aria-labelledby="t-reglas">
+        <div id="reglas"></div>
+        <p class="ayuda">Cada cambio se prueba antes de guardarse: si el documento no compila con ese valor, no se guarda. En azul, lo que difiere del sistema original. Pasa el cursor sobre una regla para ver qué hace.</p>
+      </section>
+
+      <section id="p-texto" role="tabpanel" aria-labelledby="t-texto" hidden>
+        <div class="bloque">
+          <select class="campo" id="sel-cap" aria-label="Capítulo"></select>
+          <div class="acciones">
+            <button class="btn chico verde" id="b-guardar" disabled title="⌘S">Guardar</button>
+            <button class="btn chico fantasma" id="b-recargar">Volver a cargar</button>
+            <button class="btn chico fantasma" id="b-ir-cap">Ver en la página</button>
+          </div>
+          <p class="ayuda" style="padding:0" id="info-cap"></p>
+          <div id="avisos-texto"></div>
+          <textarea class="md" id="md" spellcheck="true" aria-label="Texto del capítulo en Markdown"></textarea>
+        </div>
+        <p class="ayuda">Las láminas e imágenes se insertan desde su pestaña: van al primer espacio entre párrafos después del cursor, nunca a mitad de un párrafo.</p>
+      </section>
+
+      <section id="p-laminas" role="tabpanel" aria-labelledby="t-laminas" hidden>
+        <p class="ayuda">Diagramas y láminas del sistema. «Insertar» la pone en el capítulo abierto en Texto, donde está el cursor. Las marcadas en azul ya están en uso.</p>
+        <div id="laminas"></div>
+      </section>
+
+      <section id="p-imagenes" role="tabpanel" aria-labelledby="t-imagenes" hidden>
+        <div class="soltar" id="soltar" tabindex="0" role="button" aria-label="Subir imágenes">Arrastra imágenes aquí o haz clic para subir<br><small>JPG, PNG o WebP · se ajustan a 2000 px para cuidar el peso del PDF</small></div>
+        <input type="file" id="archivo" accept="image/jpeg,image/png,image/webp" multiple hidden>
+        <p class="ayuda">Si una imagen muestra a participantes, su uso queda cubierto por el consentimiento solo dentro de la memoria.</p>
+        <div id="imagenes"></div>
+        <div class="insertar">
+          <input class="campo" id="img-titulo" placeholder="Título de la figura (APA, en cursiva)">
+          <input class="campo" id="img-fuente" placeholder="Fuente" value="Elaboración propia.">
+          <div class="acciones">
+            <button class="btn chico verde" id="b-ins-img" disabled>Insertar imagen</button>
+            <button class="btn chico" id="b-ins-comp" disabled>Insertar composición</button>
+            <button class="btn chico fantasma" id="b-limpiar-sel" disabled>Quitar selección</button>
+          </div>
+          <p class="ayuda" id="info-sel">Selecciona 1 imagen para una lámina, o de 2 a 5 para una composición.</p>
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <!-- LIENZO -->
+  <section class="vista" aria-label="Vista previa">
+    <div class="escenario">
+      <div class="bienvenida" id="bienvenida"><div><b>Memoria de rastro</b><span id="bienvenida-txt">Cargando…</span></div></div>
+      <div class="hoja" id="hoja">
+        <div class="nav">
+          <button class="ic-btn" id="b-ant" aria-label="Página anterior"><svg class="i"><use href="#ic-izq"/></svg></button>
+          <input id="n-pag" inputmode="numeric" aria-label="Página"><span class="de" id="de">/ –</span>
+          <button class="ic-btn" id="b-sig" aria-label="Página siguiente"><svg class="i"><use href="#ic-der"/></svg></button>
+          <select id="sel-ir" aria-label="Ir al capítulo"></select>
+          <span class="atajos">← → páginas · ⌘S guardar · ⌘Z deshacer</span>
+        </div>
+        <canvas id="lienzo" aria-label="Vista de la página"></canvas><span class="velo" id="velo" hidden>Compilando…</span>
+      </div>
+    </div>
+    <div class="tira" id="tira" aria-label="Miniaturas"></div>
+  </section>
+</main>
+
+<dialog id="modal"><img id="modal-img" alt=""><p id="modal-txt" class="ayuda"></p><form method="dialog" style="text-align:right;margin-top:10px"><button class="btn chico verde">Cerrar</button></form></dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+<script type="module">
+import * as motor from './web/motor.js';
+(() => {
+  const $ = s => document.querySelector(s);
+  const S = { esquema: null, reglas: {}, estado: {}, pagina: 1, cap: null, huella: null, sucio: false,
+              catalogo: [], imagenes: [], sel: [], bloqueo: null, version: 0 };
+  const guardarLocal = (k, v) => { try { localStorage.setItem('editor-memoria:' + k, JSON.stringify(v)); } catch (e) {} };
+  const leerLocal = (k, d) => { try { const v = localStorage.getItem('editor-memoria:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+
+  // ── utilidades ────────────────────────────────────────
+  let toastT;
+  function toast(msg, mal = false) {
+    document.querySelectorAll('.toast').forEach(t => t.remove());
+    const t = document.createElement('div'); t.className = 'toast' + (mal ? ' mal' : ''); t.textContent = msg;
+    document.body.appendChild(t); clearTimeout(toastT); toastT = setTimeout(() => t.remove(), mal ? 7000 : 3200);
+  }
+  // mismas rutas que el servidor local, respondidas por el motor del navegador
+  const api = (ruta, opts = {}) => motor.api(ruta, opts);
+  const fmtBytes = b => b == null ? '–' : (b / 1e6).toFixed(1).replace('.', ',') + ' MB';
+  const fmtN = n => (n ?? 0).toLocaleString('es-CL');
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // ── estado y métricas ─────────────────────────────────
+  function trabajando(si, txt) {
+    const e = $('#estado'); e.classList.toggle('trabajando', si); if (si) e.classList.remove('error');
+    $('#estado-txt').textContent = txt || (si ? 'Compilando…' : 'Listo');
+    $('#velo').hidden = !si; $('#hoja').classList.toggle('cargando', si);
+  }
+  function pintarEstado(e) {
+    if (e) S.estado = e;
+    const E = S.estado;
+    $('#m-pag').innerHTML = `<b>${E.paginas || '–'}</b> páginas`;
+    const pal = $('#m-pal'); pal.innerHTML = `<b>${fmtN(E.palabras)}</b> / ${fmtN(E.limite_palabras || 20000)} palabras`;
+    pal.className = 'chip' + ((E.palabras || 0) > (E.limite_palabras || 20000) ? ' mal' : (E.palabras || 0) > 0.97 * (E.limite_palabras || 20000) ? ' ojo' : '');
+    pal.title = (E.palabras || 0) > (E.limite_palabras || 20000) ? 'Sobre el máximo de la memoria' : 'Texto corrido, sin referencias';
+    const pdf = $('#m-pdf'); pdf.innerHTML = `PDF <b>${fmtBytes(E.pdf_bytes)}</b>`;
+    pdf.className = 'chip' + (E.pdf_bytes > (E.limite_pdf || 1e7) ? ' mal' : '');
+    $('#de').textContent = '/ ' + (E.paginas || '–');
+    const est = $('#estado');
+    if (E.error) {
+      est.classList.add('error'); est.classList.remove('trabajando');
+      $('#estado-txt').textContent = 'Error de compilación · ver detalle';
+      est.onclick = () => mostrarErrores('El documento no compila', E.error.map(x => x.texto + (x.donde ? ' · ' + x.donde : '')));
+    } else {
+      est.classList.remove('error'); est.onclick = E.advertencias?.length ? () => mostrarErrores('Avisos de Typst', E.advertencias.map(x => x.texto + (x.donde ? ' · ' + x.donde : ''))) : null;
+      $('#estado-txt').textContent = `Listo ${E.hora || ''} · ${E.segundos || 0} s` + (E.advertencias?.length ? ` · ${E.advertencias.length} aviso(s)` : '');
+    }
+    pintarIr(); pintarTira(); verPagina(S.pagina, false);
+  }
+  function mostrarErrores(titulo, lista) {
+    $('#modal-img').hidden = true;
+    $('#modal-txt').innerHTML = `<b>${esc(titulo)}</b><ul class="errores">${(lista || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    $('#modal').showModal();
+  }
+
+  // ── navegación de páginas ─────────────────────────────
+  function verPagina(p, mover = true) {
+    const n = S.estado.paginas || 1; p = Math.max(1, Math.min(n, p | 0 || 1)); S.pagina = p; guardarLocal('pagina', p);
+    $('#n-pag').value = p;
+    const lz = $('#lienzo'), clave = S.estado.generacion + ':' + p + ':' + $('#hoja').clientWidth;
+    if (lz.dataset.clave !== clave) { lz.dataset.clave = clave; motor.dibujar(p, lz, $('#hoja').clientWidth || 900).catch(() => {}); }
+    document.querySelectorAll('.tira button').forEach(b => b.setAttribute('aria-current', String(+b.dataset.p === p)));
+    if (mover) document.querySelector(`.tira button[data-p="${p}"]`)?.scrollIntoView({ inline: 'center', block: 'nearest' });
+    const c = capituloDePagina(p); $('#sel-ir').value = c ? c.num : 'pre';
+  }
+  function capituloDePagina(p) { let c = null; for (const m of S.estado.mapa || []) if (m.pagina && m.pagina <= p) c = m; return c; }
+  function pintarIr() {
+    const s = $('#sel-ir'); const v = s.value;
+    s.innerHTML = '<option value="pre">Preliminares (p. 1–3)</option>' + (S.estado.mapa || []).map(m => `<option value="${m.num}">${m.num} · ${esc(m.titulo)} (p. ${m.pagina ?? '–'})</option>`).join('');
+    if (v) s.value = v;
+  }
+  let tiraGen = -1, observador;
+  function pintarTira() {
+    if (tiraGen === S.estado.generacion) return; tiraGen = S.estado.generacion;
+    const t = $('#tira'), n = S.estado.paginas || 0, g = S.estado.generacion;
+    const inicios = {}; (S.estado.mapa || []).forEach(m => { if (m.pagina) inicios[m.pagina] = m.num; });
+    let h = '';
+    for (let i = 1; i <= n; i++) {
+      if (inicios[i]) h += `<span class="cap">${esc(inicios[i])}</span>`;
+      h += `<button data-p="${i}" aria-label="Página ${i}"><canvas></canvas><span class="n">${i}</span></button>`;
+    }
+    t.innerHTML = h;
+    // miniaturas: se dibujan solo cuando aparecen en la tira
+    observador?.disconnect();
+    observador = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting || g !== motor.generacion()) return;
+      observador.unobserve(e.target); motor.dibujar(+e.target.dataset.p, e.target.querySelector('canvas'), 88).catch(() => {});
+    }), { root: t, rootMargin: '0px 500px' });
+    t.querySelectorAll('button').forEach(b => { b.onclick = () => verPagina(+b.dataset.p); observador.observe(b); });
+    verPagina(S.pagina);
+  }
+  $('#b-ant').onclick = () => verPagina(S.pagina - 1);
+  $('#b-sig').onclick = () => verPagina(S.pagina + 1);
+  $('#n-pag').onchange = e => verPagina(+e.target.value);
+  $('#sel-ir').onchange = e => { if (e.target.value === 'pre') return verPagina(1); const m = S.estado.mapa.find(x => x.num === e.target.value); if (m?.pagina) verPagina(m.pagina); };
+
+  // ── pestañas ──────────────────────────────────────────
+  const tabs = ['reglas', 'texto', 'laminas', 'imagenes'];
+  function abrirTab(t) {
+    tabs.forEach(x => { $('#t-' + x).setAttribute('aria-selected', String(x === t)); $('#p-' + x).hidden = x !== t; });
+    $('#panel-tit').textContent = { reglas: 'Reglas', texto: 'Texto', laminas: 'Láminas', imagenes: 'Imágenes' }[t];
+    $('#panel-ic use').setAttribute('href', '#ic-' + t);
+    $('#b-restaurar').hidden = t !== 'reglas';
+    document.querySelector('.cuerpo').dataset.tab = t;
+    guardarLocal('tab', t);
+    if (t === 'laminas' && !S.catalogo.length) cargarCatalogo();
+    if (t === 'imagenes' && !S.imagenes.length) cargarImagenes();
+  }
+  tabs.forEach(t => $('#t-' + t).onclick = () => abrirTab(t));
+
+  // ── REGLAS ────────────────────────────────────────────
+  const valor = (sec, g) => S.reglas?.[sec]?.[g.id] ?? g.defecto;
+  function pintarReglas() {
+    const cont = $('#reglas'); const abiertas = leerLocal('abiertas', ['pagina', 'tipografia']);
+    cont.innerHTML = S.esquema.secciones.map(s => {
+      const n = s.reglas.filter(g => valor(s.id, g) !== g.defecto).length;
+      return `<details class="sec" data-sec="${s.id}" ${abiertas.includes(s.id) ? 'open' : ''}><summary>${esc(s.nombre)}<span class="cuenta">${n ? n + ' cambiada' + (n > 1 ? 's' : '') : ''}</span></summary>
+        ${s.reglas.map(g => control(s.id, g)).join('')}
+      </details>`; }).join('');
+    cont.querySelectorAll('details').forEach(d => d.ontoggle = () => guardarLocal('abiertas', [...cont.querySelectorAll('details[open]')].map(x => x.dataset.sec)));
+    cont.querySelectorAll('[data-regla]').forEach(enlazar);
+    cont.querySelectorAll('input[type=range]').forEach(relleno);
+  }
+  // pinta la parte llena de la pista hasta el tirador
+  function relleno(r) { r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min) * 100) + '%'); }
+  function control(sec, g) {
+    const v = valor(sec, g), cambiado = v !== g.defecto, id = `r-${sec}-${g.id}`;
+    const unidad = g.unidad && g.unidad !== 'col' ? ` <span class="u">(${esc(g.unidad)})</span>` : g.unidad === 'col' ? ' <span class="u">(columna)</span>' : '';
+    const campo = g.tipo === 'numero' ? `<input type="range" id="${id}" min="${g.min}" max="${g.max}" step="${g.paso}" value="${v}"><input type="number" aria-label="${esc(g.nombre)} (valor)" min="${g.min}" max="${g.max}" step="${g.paso}" value="${v}">`
+                : g.tipo === 'opcion' ? `<select id="${id}">${g.opciones.map(o => `<option ${o === v ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`
+                : g.tipo === 'color' ? `<span class="color"><input type="color" id="${id}" value="${v}"><output>${esc(v)}</output></span>`
+                : g.tipo === 'si_no' ? `<span class="interruptor"><input type="checkbox" id="${id}" ${v ? 'checked' : ''}><span></span></span>` : '';
+    return `<div class="ctl ${cambiado ? 'cambiado' : ''}" data-regla="${sec}.${g.id}">
+      <div class="fila"><label for="${id}" title="${esc(g.ayuda || '')}">${esc(g.nombre)}${unidad}</label><span class="campo-ctl">${campo}</span><button class="reset" title="Volver al valor original (${esc(String(g.defecto))})" aria-label="Restaurar ${esc(g.nombre)}"><svg class="i" style="width:13px;height:13px"><use href="#ic-reset"/></svg></button></div>
+      <p class="desc">${esc(g.ayuda || '')}</p></div>`;
+  }
+  function regla(sec, id) { return S.esquema.secciones.find(s => s.id === sec).reglas.find(g => g.id === id); }
+  function enlazar(el) {
+    const [sec, id] = el.dataset.regla.split('.'), g = regla(sec, id);
+    const rng = el.querySelector('input[type=range]'), num = el.querySelector('input[type=number]');
+    const fijar = v => {
+      S.reglas[sec] = S.reglas[sec] || {};
+      if (v === g.defecto) delete S.reglas[sec][id]; else S.reglas[sec][id] = v;
+      el.classList.toggle('cambiado', v !== g.defecto);
+      const d = el.closest('details'), n = d.querySelectorAll('.ctl.cambiado').length;
+      d.querySelector('.cuenta').textContent = n ? n + ' cambiada' + (n > 1 ? 's' : '') : '';
+      programarReglas();
+    };
+    if (g.tipo === 'numero') {
+      rng.oninput = () => { num.value = rng.value; relleno(rng); fijar(+rng.value); };
+      num.onchange = () => { let v = +num.value; if (isNaN(v)) v = g.defecto; v = Math.max(g.min, Math.min(g.max, v)); num.value = rng.value = v; relleno(rng); fijar(v); };
+    }
+    if (g.tipo === 'opcion') el.querySelector('select').onchange = e => fijar(e.target.value);
+    if (g.tipo === 'color') el.querySelector('input[type=color]').oninput = e => { el.querySelector('output').textContent = e.target.value.toUpperCase(); fijar(e.target.value.toUpperCase()); };
+    if (g.tipo === 'si_no') el.querySelector('input[type=checkbox]').onchange = e => fijar(e.target.checked);
+    el.querySelector('.reset').onclick = () => { fijar(g.defecto); pintarReglas(); };
+  }
+  let tReglas, enVuelo = 0;
+  function programarReglas() { clearTimeout(tReglas); trabajando(true, 'Esperando…'); tReglas = setTimeout(enviarReglas, 450); }
+  async function enviarReglas() {
+    const mio = ++enVuelo; trabajando(true);
+    try {
+      const d = await api('/api/reglas', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(S.reglas) });
+      if (mio !== enVuelo) return;            // llegó un cambio más nuevo: gana el último
+      S.bueno = JSON.parse(JSON.stringify(S.reglas));
+      pintarEstado(d.estado);
+    } catch (e) {
+      if (mio !== enVuelo) return;
+      trabajando(false); pintarEstado();
+      S.reglas = JSON.parse(JSON.stringify(S.bueno || {})); pintarReglas();   // vuelve a lo último que compiló
+      if (e.detalle) mostrarErrores(e.message, e.detalle); else toast(e.message, true);
+    }
+  }
+  $('#b-restaurar').onclick = () => { if (!confirm('¿Volver todas las reglas a los valores originales del sistema?')) return; S.reglas = {}; pintarReglas(); programarReglas(); };
+  async function deshacer() {
+    trabajando(true, 'Deshaciendo…');
+    try { const d = await api('/api/deshacer-reglas', { method: 'POST' }); S.reglas = d.reglas; S.bueno = JSON.parse(JSON.stringify(d.reglas)); pintarReglas(); pintarEstado(d.estado); toast('Volviste a las reglas anteriores'); }
+    catch (e) { trabajando(false); pintarEstado(); toast(e.message, true); }
+  }
+  $('#b-deshacer').onclick = deshacer;
+
+  // ── TEXTO ─────────────────────────────────────────────
+  async function cargarCapitulos() {
+    const caps = await api('/api/capitulos'); S.caps = caps;
+    $('#sel-cap').innerHTML = caps.map(c => `<option value="${esc(c.archivo)}">${esc(c.num)} · ${esc(c.titulo)} — ${fmtN(c.palabras)} pal.</option>`).join('');
+    const ult = leerLocal('cap', caps[1]?.archivo); $('#sel-cap').value = ult; await abrirCap(ult);
+  }
+  async function abrirCap(archivo) {
+    if (S.sucio && !confirm('Hay cambios sin guardar en este capítulo. ¿Descartarlos?')) { $('#sel-cap').value = S.cap; return; }
+    const d = await api('/api/capitulo?archivo=' + encodeURIComponent(archivo));
+    S.cap = archivo; S.huella = d.huella; guardarLocal('cap', archivo);
+    $('#md').value = d.texto; marcarSucio(false); avisosTexto(d.desconocidos);
+    const c = S.caps.find(x => x.archivo === archivo); $('#info-cap').textContent = c ? `${fmtN(c.palabras)} palabras en este capítulo` : '';
+  }
+  function avisosTexto(malos, conflicto) {
+    const a = $('#avisos-texto'); let h = '';
+    if (conflicto) h += `<div class="aviso mal">${esc(conflicto)}</div>`;
+    if (malos?.length) h += `<div class="aviso">Marcadores que no existen en el catálogo (no se van a ver):<br>${malos.map(m => `<code>${esc(m)}</code>`).join('<br>')}</div>`;
+    a.innerHTML = h;
+  }
+  function marcarSucio(v) { S.sucio = v; $('#b-guardar').disabled = !v; $('#b-guardar').textContent = v ? 'Guardar •' : 'Guardado'; }
+  $('#md').oninput = () => marcarSucio(true);
+  $('#sel-cap').onchange = async e => { await abrirCap(e.target.value); const m = S.estado.mapa?.find(x => x.archivo === S.cap); if (m?.pagina) verPagina(m.pagina); else if (S.cap?.startsWith('00')) verPagina(2); };
+  $('#b-recargar').onclick = () => { S.sucio = false; abrirCap(S.cap); };
+  $('#b-ir-cap').onclick = () => { const c = S.caps.find(x => x.archivo === S.cap); const m = S.estado.mapa?.find(x => x.archivo === S.cap); if (m?.pagina) verPagina(m.pagina); else toast(c?.num === '00' ? 'El resumen está en la página 2' : 'Sin página para este capítulo'); };
+  async function guardarTexto() {
+    if (!S.sucio) return; trabajando(true, 'Guardando…');
+    try {
+      const d = await api('/api/capitulo', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ archivo: S.cap, huella: S.huella, texto: $('#md').value }) });
+      S.huella = d.huella; marcarSucio(false); avisosTexto(d.desconocidos); pintarEstado(d.estado);
+      toast(d.aviso || 'Guardado y compilado'); cargarCapitulosSilencio();
+    } catch (e) {
+      trabajando(false); pintarEstado();
+      if (e.codigo === 409) avisosTexto([], e.message); else toast(e.message, true);
+    }
+  }
+  async function cargarCapitulosSilencio() { try { S.caps = await api('/api/capitulos'); const v = $('#sel-cap').value; $('#sel-cap').innerHTML = S.caps.map(c => `<option value="${esc(c.archivo)}">${esc(c.num)} · ${esc(c.titulo)} — ${fmtN(c.palabras)} pal.</option>`).join(''); $('#sel-cap').value = v; } catch (e) {} }
+  $('#b-guardar').onclick = guardarTexto;
+
+  // inserta un marcador en el primer espacio entre bloques después del cursor
+  function insertar(marcador) {
+    const ta = $('#md'); if (!S.cap) { toast('Abre un capítulo en la pestaña Texto', true); return; }
+    let t = ta.value, pos = ta.selectionStart ?? t.length;
+    let corte = t.indexOf('\n\n', pos); if (corte < 0) corte = t.length;
+    const antes = t.slice(0, corte).replace(/\s+$/, ''), despues = t.slice(corte).replace(/^\s+/, '');
+    const nuevo = antes + '\n\n' + marcador + '\n\n' + despues;
+    ta.value = nuevo; const ini = antes.length + 2; ta.setSelectionRange(ini, ini + marcador.length);
+    marcarSucio(true); abrirTab('texto'); ta.focus();
+    toast('Insertado en el texto. Guarda (⌘S) para verlo en la página.');
+  }
+
+  // ── LÁMINAS ───────────────────────────────────────────
+  async function cargarCatalogo() {
+    $('#laminas').innerHTML = '<p class="ayuda">Cargando catálogo…</p>';
+    try { S.catalogo = await api('/api/catalogo'); } catch (e) { $('#laminas').innerHTML = `<div class="aviso mal">${esc(e.message)}</div>`; return; }
+    const grupos = [...new Set(S.catalogo.map(x => x.grupo))];
+    $('#laminas').innerHTML = grupos.map(g => `<div class="grupo">${esc(g)}</div><div class="rejilla">${S.catalogo.filter(x => x.grupo === g).map(x => `
+      <div class="tarjeta"><button class="mini" data-lam="${x.id}" aria-label="Ver ${esc(x.nombre)}"><span class="cargando">cargando…</span></button>
+        <div class="info"><div class="nom">${esc(x.nombre)}</div><div class="id">${x.id}</div>
+          <div class="usos">${x.usos.length ? x.usos.map(u => `<span class="en-uso">en §${esc(u)}</span>`).join('') : '<span>sin usar</span>'}</div>
+          <div class="bts"><button class="btn chico" data-ins="fig:${x.id}">Insertar</button>${x.lado ? `<button class="btn chico fantasma" data-ins="lado:${x.id}" title="El texto anterior va a la izquierda y el diagrama a la derecha">Al costado</button>` : ''}</div>
+        </div></div>`).join('')}</div>`).join('');
+    // miniaturas de a una, para no saturar el servidor
+    const minis = [...document.querySelectorAll('[data-lam]')];
+    (async () => { for (const b of minis) { const src = `catalogo/${b.dataset.lam}.png`; await new Promise(ok => { const i = new Image(); i.onload = () => { b.style.backgroundImage = `url('${src}')`; b.innerHTML = ''; ok(); }; i.onerror = () => { b.querySelector('.cargando').textContent = 'sin vista'; ok(); }; i.src = src; }); } })();
+    document.querySelectorAll('[data-lam]').forEach(b => b.onclick = () => { const x = S.catalogo.find(c => c.id === b.dataset.lam); $('#modal-img').hidden = false; $('#modal-img').src = `catalogo/${x.id}.png`; $('#modal-txt').textContent = `${x.nombre} · ${x.id}`; $('#modal').showModal(); });
+    document.querySelectorAll('[data-ins]').forEach(b => b.onclick = () => insertar(`<!-- ${b.dataset.ins} -->`));
+  }
+
+  // ── IMÁGENES ──────────────────────────────────────────
+  async function cargarImagenes() {
+    try { S.imagenes = await api('/api/imagenes'); } catch (e) { $('#imagenes').innerHTML = `<div class="aviso mal">${esc(e.message)}</div>`; return; }
+    const nombres = { repositorio: 'Repositorio', testeo: S.fotosReservadas ? 'Fotos del testeo · reservadas en la versión web' : 'Fotos del testeo (solo lectura)' };
+    $('#imagenes').innerHTML = ['repositorio', 'testeo'].map(g => {
+      const xs = S.imagenes.filter(x => x.grupo === g);
+      return `<div class="grupo">${nombres[g]} · ${xs.length}</div>` + (xs.length ? `<div class="rejilla">${xs.map(x => {
+        const k = g + '/' + x.nombre, sel = S.sel.includes(k);
+        return `<div class="tarjeta ${sel ? 'sel' : ''}" data-k="${esc(k)}"><button class="mini foto" style="background-image:url('${motor.urlImagen(g, x.nombre)}')" aria-pressed="${sel}" aria-label="Seleccionar ${esc(x.nombre)}"><span class="check">${sel ? S.sel.indexOf(k) + 1 : ''}</span></button>
+          <div class="info"><div class="nom">${esc(x.nombre)}</div><div class="id">${x.ancho}×${x.alto} · ${fmtBytes(x.bytes)}</div>
+          <div class="usos">${x.usos.length ? x.usos.map(u => `<span class="en-uso">${u === 'láminas' ? 'en láminas' : 'en §' + esc(u)}</span>`).join('') : '<span>sin usar</span>'}</div>
+          ${g === 'repositorio' ? `<div class="bts"><button class="btn chico fantasma" data-borrar="${esc(x.nombre)}" ${x.usos.length ? 'disabled title="Está en uso"' : ''}>Borrar</button></div>` : ''}</div></div>`; }).join('')}</div>`
+        : `<p class="ayuda">${g === 'repositorio' ? 'Todavía no hay imágenes. Súbelas arriba.' : 'No hay fotos.'}</p>`);
+    }).join('');
+    document.querySelectorAll('.tarjeta[data-k] .mini').forEach(b => b.onclick = () => alternarSel(b.closest('.tarjeta').dataset.k));
+    document.querySelectorAll('[data-borrar]').forEach(b => b.onclick = async () => {
+      if (!confirm(`¿Borrar ${b.dataset.borrar}? Queda una copia en el historial.`)) return;
+      try { await api('/api/imagenes?nombre=' + encodeURIComponent(b.dataset.borrar), { method: 'DELETE' }); toast('Borrada'); S.sel = S.sel.filter(k => k !== 'repositorio/' + b.dataset.borrar); cargarImagenes(); } catch (e) { toast(e.message, true); }
+    });
+    pintarSel();
+  }
+  function alternarSel(k) { const i = S.sel.indexOf(k); if (i >= 0) S.sel.splice(i, 1); else if (S.sel.length < 5) S.sel.push(k); else { toast('Una composición tiene hasta 5 imágenes', true); return; } cargarImagenes(); }
+  function pintarSel() {
+    const n = S.sel.length;
+    $('#b-ins-img').disabled = n !== 1; $('#b-ins-comp').disabled = n < 2; $('#b-limpiar-sel').disabled = n === 0;
+    $('#info-sel').textContent = n === 0 ? 'Selecciona 1 imagen para una lámina, o de 2 a 5 para una composición.' : n === 1 ? '1 imagen seleccionada.' : `${n} imágenes: la primera va grande, las demás al costado.`;
+  }
+  const nombreEnMarcador = k => { const [g, ...r] = k.split('/'); const n = r.join('/'); return g === 'testeo' ? n.replace(/\.[^.]+$/, '') : n; };
+  function pie() {
+    const t = $('#img-titulo').value.trim(), f = $('#img-fuente').value.trim() || 'Elaboración propia.';
+    if (!t) { toast('Escribe el título de la figura: la norma APA lo pide', true); $('#img-titulo').focus(); return null; }
+    if (/[|>]|--/.test(t + f)) { toast('El título y la fuente no pueden llevar «|», «>» ni «--»', true); return null; }
+    return ` | ${t} | ${f}`;
+  }
+  $('#b-ins-img').onclick = () => { const p = pie(); if (p == null) return; const k = S.sel[0]; insertar(k.startsWith('repositorio/') ? `<!-- img:${nombreEnMarcador(k)}${p} -->` : `<!-- fotos:${nombreEnMarcador(k)}${p} -->`); };
+  $('#b-ins-comp').onclick = () => { const p = pie(); if (p == null) return; insertar(`<!-- fotos:${S.sel.map(nombreEnMarcador).join(', ')}${p} -->`); };
+  $('#b-limpiar-sel').onclick = () => { S.sel = []; cargarImagenes(); };
+  // subir
+  const soltar = $('#soltar'), archivo = $('#archivo');
+  soltar.onclick = () => archivo.click(); soltar.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); archivo.click(); } };
+  soltar.ondragover = e => { e.preventDefault(); soltar.classList.add('encima'); };
+  soltar.ondragleave = () => soltar.classList.remove('encima');
+  soltar.ondrop = e => { e.preventDefault(); soltar.classList.remove('encima'); subir([...e.dataTransfer.files]); };
+  archivo.onchange = () => { subir([...archivo.files]); archivo.value = ''; };
+  async function subir(fs) {
+    for (const f of fs) {
+      if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { toast(`${f.name}: solo JPG, PNG o WebP`, true); continue; }
+      soltar.textContent = `Subiendo ${f.name}…`;
+      const fd = new FormData(); fd.append('archivo', f, f.name);
+      try { const d = await api('/api/imagenes', { method: 'POST', body: fd }); toast(`Subida: ${d.nombre}`); } catch (e) { toast(`${f.name}: ${e.message}`, true); }
+    }
+    soltar.innerHTML = 'Arrastra imágenes aquí o haz clic para subir<br><small>JPG, PNG o WebP · se ajustan a 2000 px para cuidar el peso del PDF</small>';
+    cargarImagenes();
+  }
+
+  // ── exportar ──────────────────────────────────────────
+  $('#b-exportar').onclick = async () => {
+    const b = $('#b-exportar'); b.disabled = true; trabajando(true, 'Exportando PDF…');
+    try { const d = await api('/api/exportar', { method: 'POST' }); S.estado.pdf_bytes = d.bytes; trabajando(false); pintarEstado();
+      toast(d.bytes > 1e7 ? `PDF exportado: ${fmtBytes(d.bytes)}. Pasa el límite de 10 MB.` : `PDF exportado: ${fmtBytes(d.bytes)}`, d.bytes > 1e7);
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([motor.pdfActual()], { type: 'application/pdf' })); a.download = 'memoria-rastro.pdf'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); }
+    catch (e) { trabajando(false); pintarEstado(); if (e.detalle) mostrarErrores(e.message, e.detalle); else toast(e.message, true); }
+    b.disabled = false;
+  };
+
+  // ── teclado ───────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    const enTexto = /^(TEXTAREA|INPUT|SELECT)$/.test(document.activeElement?.tagName);
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); guardarTexto(); return; }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !enTexto) { e.preventDefault(); deshacer(); return; }
+    if (enTexto) return;
+    if (e.key === 'ArrowRight') verPagina(S.pagina + 1);
+    if (e.key === 'ArrowLeft') verPagina(S.pagina - 1);
+  });
+  window.addEventListener('beforeunload', e => { if (S.sucio) { e.preventDefault(); e.returnValue = ''; } });
+
+  // ── inicio ────────────────────────────────────────────
+  (async () => {
+    try {
+      trabajando(true, 'Cargando…');
+      const avance = t => { $('#estado-txt').textContent = t; $('#bienvenida-txt').textContent = t; };
+      motor.onCambios(pintarCambios);
+      motor.onMapa(e => { S.estado.mapa = e.mapa; tiraGen = -1; pintarIr(); pintarTira(); });
+      const ini = await motor.iniciar(avance);
+      $('#bienvenida').hidden = true;
+      if (ini.desfasados.length) toast(`Tienes cambios hechos sobre una versión publicada anterior (${ini.desfasados.length} archivo/s). Revísalos en «cambios».`, true);
+      if (!ini.fotos) S.fotosReservadas = true;
+      const [esq, reg, est] = await Promise.all([api('/api/esquema'), api('/api/reglas'), api('/api/estado')]);
+      S.esquema = esq; S.reglas = reg; S.bueno = JSON.parse(JSON.stringify(reg)); S.pagina = leerLocal('pagina', 1);
+      pintarReglas(); trabajando(false); pintarEstado(est);
+      const tabUrl = new URLSearchParams(location.search).get('tab');
+      abrirTab(tabs.includes(tabUrl) ? tabUrl : leerLocal('tab', 'reglas'));
+      await cargarCapitulos();
+    } catch (e) { console.error(e); trabajando(false); $('#estado').classList.add('error'); $('#estado-txt').textContent = e.message; $('#bienvenida-txt').textContent = 'No se pudo cargar: ' + e.message; }
+  })();
+
+  // ── cambios hechos en este navegador ──────────────────
+  function pintarCambios(n) {
+    const c = $('#m-cambios'); c.hidden = !n;
+    c.innerHTML = `<b>${n}</b> cambio${n === 1 ? '' : 's'} sin bajar`;
+  }
+  $('#m-cambios').onclick = () => {
+    const xs = motor.listaCambios();
+    $('#modal-img').hidden = true;
+    $('#modal-txt').innerHTML = `<b>Cambios guardados en este navegador</b>
+      <p class="ayuda" style="padding:6px 0 0">Siguen aquí aunque cierres la pestaña, pero solo en este navegador. Para llevarlos a tu carpeta <code>memoria/</code>, descárgalos y descomprime el .zip encima.</p>
+      <div class="lista-cambios">${xs.map(x => `${x.borrado ? '− ' : '· '}${esc(x.ruta.slice(1))}${x.desfasado ? ' ⚠ la versión publicada cambió después' : ''}`).join('<br>')}</div>
+      <div class="acciones"><button class="btn chico verde" id="b-bajar-cambios">Descargar cambios (.zip)</button><button class="btn chico fantasma" id="b-descartar">Descartar todo</button></div>`;
+    $('#modal').showModal();
+    $('#b-bajar-cambios').onclick = async () => {
+      const blob = await motor.zipCambios(), a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'rastro-cambios-' + new Date().toISOString().slice(0, 10) + '.zip'; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    };
+    $('#b-descartar').onclick = async () => {
+      if (!confirm('¿Descartar todos los cambios y volver a la versión publicada? No se puede deshacer.')) return;
+      $('#modal').close(); trabajando(true, 'Descartando…');
+      await motor.descartarCambios();
+      S.reglas = await api('/api/reglas'); S.bueno = JSON.parse(JSON.stringify(S.reglas)); pintarReglas();
+      S.sucio = false; await cargarCapitulos(); trabajando(false); pintarEstado(await api('/api/estado'));
+      S.imagenes = []; S.catalogo = []; toast('Volviste a la versión publicada');
+    };
+  };
+})();
+</script>
+</body>
+</html>

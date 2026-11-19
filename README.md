@@ -1,87 +1,78 @@
-# estudio memoria
+# estudio memoria · rastro
 
-Editor local para diagramar la memoria de título de ***rastro*** (Diseño, UDP, 2026).
-Cambia las reglas de diagramación, el texto, las láminas y las imágenes del documento,
-y muestra el resultado en la página en segundos.
+Editor de la memoria de título de ***rastro*** (Diseño, UDP, 2026). Ajusta las reglas de
+diagramación, el texto, las láminas y las imágenes, y muestra el resultado en la página
+en segundos.
 
-![El editor: reglas a la izquierda, página al centro](captura.png)
+**Ábrelo aquí → [emiguerra.github.io/estudio-memoria](https://emiguerra.github.io/estudio-memoria/)**
+
+![El editor: reglas a la izquierda, la memoria al centro](captura.png)
 
 ## Para qué se creó
 
 La memoria se diagrama con [Typst](https://typst.app), un sistema paramétrico como LaTeX:
 el diseño son reglas (márgenes, columnas, tamaños, cuándo cortar una página) y no cajas
-movidas a mano. Cada ajuste obligaba a pedir el cambio, esperar y revisar. Este editor
-expone esas reglas en un panel para ajustarlas directamente, ver el efecto al instante
-y no romper nada en el intento.
+movidas a mano. Este editor expone esas reglas en un panel para ajustarlas directamente,
+ver el efecto al instante y no romper nada en el intento. Primero existió en local, con un
+servidor en el computador. Esta versión corre entera en el navegador, desde cualquier lado.
 
 ## Qué hace
 
 | Pestaña | Qué permite |
 |---|---|
-| **Reglas** | 33 reglas en seis grupos: página, tipografía, color, flujo y equilibrio, texto y figuras. Cada una con su valor por defecto, su rango y un ↺ para volver atrás. |
-| **Texto** | Editar el Markdown de cada capítulo con el conteo de palabras contra el límite de 20.000. |
-| **Láminas** | Catálogo de los diagramas del sistema con miniatura y dónde se usa cada uno. Se insertan en el texto o al costado de él. |
-| **Imágenes** | Repositorio de imágenes con arrastrar y soltar. Arma láminas y composiciones con título y fuente APA. |
-
-Al centro se ve la página compilada; arriba, páginas, palabras, peso del PDF y estado.
-
-**Lo que no deja pasar:**
-- Una regla solo se guarda si el documento compila con ella.
-- Si un capítulo cambió fuera del editor, no lo pisa: avisa.
-- Cada guardado deja una copia en `historial/`, y está el botón Deshacer.
-- Las imágenes se ajustan a 2000 px y no se puede borrar una que esté en uso.
-- Las láminas se insertan entre párrafos, nunca a mitad de uno.
-
-El detalle de cada riesgo y su decisión está en [ROAST.md](ROAST.md).
+| **Reglas** | 33 reglas en seis grupos: página, tipografía, color, flujo y equilibrio, texto y figuras. Una regla solo se aplica si el documento compila con ella. |
+| **Texto** | Editar el Markdown de cada capítulo, con el conteo de palabras contra el límite de 20.000. |
+| **Láminas** | Los diagramas de la memoria con miniatura y dónde se usa cada uno. Se insertan en el texto o al costado de él. |
+| **Imágenes** | Repositorio de imágenes y fotos del testeo, para armar láminas y composiciones con título y fuente APA. |
 
 ## Cómo se usa
 
-Requisitos: macOS, Python 3 con Pillow y Typst 0.15.
+**En la web:** abre el link. La primera vez descarga Typst (28 MB) y la memoria publicada
+(12 MB), y después queda en la caché.
 
-1. Doble clic en `abrir-editor.command`. Se abre el navegador en `http://127.0.0.1:8790`.
-2. Mueve una regla, edita un capítulo o inserta una lámina; la página se actualiza sola.
-3. **Exportar PDF** compila el documento final.
+Lo que edites se guarda en ese navegador, encima de la versión publicada. La barra de
+arriba muestra cuántos cambios tienes sin bajar. Para llevarlos a la carpeta de la memoria:
+**cambios → Descargar cambios (.zip)** y descomprime el .zip encima de `memoria/`.
 
-Atajos: ← → cambian de página · ⌘S guarda el texto · ⌘Z deshace la última regla.
+**En local:** el editor original vive en `memoria/diagramacion/editor/` (copia en
+[`local/`](local/)). Se abre con doble clic en `abrir-editor.command`.
 
-Sin el doble clic: `python3 servidor_memoria.py`. El editor necesita que el servidor siga
-abierto.
+**Para publicar una versión nueva** después de trabajar en local:
+
+```
+python3 herramientas/sincronizar.py            # fotos del testeo como recuadros
+python3 herramientas/sincronizar.py --con-fotos
+git add -A && git commit -m "Memoria actualizada" && git push
+```
+
+El script copia solo lo que la memoria usa, junta las fuentes, dibuja las miniaturas de
+las láminas y compila la copia sin fuentes del sistema para confirmar que la web va a ver
+lo mismo que el computador.
 
 ## Qué hay acá
 
 ```
-editor/
-├── estudio-memoria.html   interfaz (panel a la izquierda, página al centro)
-├── servidor_memoria.py    servidor local: valida, guarda y compila con Typst
-├── esquema.json           cada regla: nombre, tipo, rango, valor por defecto y ayuda
-├── reglas.json            solo lo que se cambió respecto del esquema
-├── abrir-editor.command   lanzador de doble clic
-└── ROAST.md               qué podía salir mal y cómo se resolvió
+index.html              la interfaz (la misma del editor local)
+web/motor.js            el servidor del editor, pero en el navegador: Typst, pdf.js y cambios
+memoria/                la memoria publicada: .typ, capítulos, imágenes, fuentes y manifiesto
+catalogo/               miniaturas e índice de las láminas
+herramientas/
+  sincronizar.py        publica la memoria desde la carpeta local
+local/                  el editor local (servidor Python + Typst instalado)
+ROAST.md                qué podía salir mal en la versión web y cómo se resolvió
 ```
-
-El editor vive dentro de `diagramacion/` y trabaja sobre lo que está al lado:
-
-- `memoria.typ` arma el documento;
-- `reglas.typ` lee `esquema.json` + `reglas.json` y se los entrega a Typst;
-- `laminas.typ` contiene el catálogo de láminas;
-- `limpias/` guarda los capítulos en Markdown;
-- `imagenes/` es el repositorio.
-
-Esos archivos (y el contenido de la memoria) **no están en este repo**: contienen el texto
-de la tesis y material de participantes.
-
-Para agregar una regla nueva se suma a `esquema.json` y se lee en Typst como
-`R.<grupo>.<id>`: aparece sola en el panel.
 
 ## Referencias
 
-- [Typst](https://typst.app): motor de composición del documento.
+- [Typst](https://typst.app), el motor de composición, y
+  [typst.ts](https://github.com/Myriad-Dreamin/typst.ts), que lo corre en el navegador.
 - [cmarker](https://typst.app/universe/package/cmarker): Markdown dentro de Typst.
-- [Brik](https://brik.space/gallery): referente de la interfaz (controles en acordeón,
-  lienzo con guías, barra en celdas).
-- [Geist](https://vercel.com/font): tipografía de la interfaz.
-- El estudio de posts de Instagram de ***rastro***: primer editor del mismo tipo, del que
-  nace la idea.
+- [pdf.js](https://mozilla.github.io/pdf.js/) para mostrar las páginas y
+  [JSZip](https://stuk.github.io/jszip/) para bajar los cambios.
+- [Brik](https://brik.space/gallery): referente de la interfaz.
+- [Geist](https://vercel.com/font), la tipografía de la interfaz.
+- La versión abierta, para cualquier memoria:
+  [editor-memoria](https://github.com/emiguerra/editor-memoria).
 
 ---
 

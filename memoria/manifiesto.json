@@ -1,0 +1,570 @@
+{
+"fotos_publicadas": false,
+"archivos": [
+{
+"ruta": "/diagramacion/app.typ",
+"bytes": 36250,
+"huella": "026e306fe981"
+},
+{
+"ruta": "/diagramacion/app/android-fondo-1024.png",
+"bytes": 3129,
+"huella": "a8205d5dc283"
+},
+{
+"ruta": "/diagramacion/app/android-frente-1024.png",
+"bytes": 32269,
+"huella": "2d58b2a86094"
+},
+{
+"ruta": "/diagramacion/app/captura-01-feed.jpg",
+"bytes": 106817,
+"huella": "a4840e42f9f0"
+},
+{
+"ruta": "/diagramacion/app/captura-02-publica-para-ver.jpg",
+"bytes": 97186,
+"huella": "fa9abeb2048b"
+},
+{
+"ruta": "/diagramacion/app/captura-03-perfil.jpg",
+"bytes": 94237,
+"huella": "9acd7e7bc16c"
+},
+{
+"ruta": "/diagramacion/app/captura-04-vista-previa.jpg",
+"bytes": 87531,
+"huella": "536a2064fa49"
+},
+{
+"ruta": "/diagramacion/app/icono-maestro-1024.png",
+"bytes": 21817,
+"huella": "f770c972047a"
+},
+{
+"ruta": "/diagramacion/app/play-grafico-destacado-1024x500.png",
+"bytes": 18809,
+"huella": "b5c7823bf828"
+},
+{
+"ruta": "/diagramacion/app/play-icono-512.png",
+"bytes": 16649,
+"huella": "2cfdc62000bd"
+},
+{
+"ruta": "/diagramacion/app/vista-previa-ANTES-se-recorta.png",
+"bytes": 22279,
+"huella": "da7381291f05"
+},
+{
+"ruta": "/diagramacion/app/vista-previa-circulo.png",
+"bytes": 23471,
+"huella": "15acd590f0e2"
+},
+{
+"ruta": "/diagramacion/app/vista-previa-squircle.png",
+"bytes": 22352,
+"huella": "5a948c2504d8"
+},
+{
+"ruta": "/diagramacion/arbol.typ",
+"bytes": 3207,
+"huella": "752e355b4689"
+},
+{
+"ruta": "/diagramacion/editor/esquema.json",
+"bytes": 6986,
+"huella": "36bd881f0a02"
+},
+{
+"ruta": "/diagramacion/editor/reglas.json",
+"bytes": 3,
+"huella": "5f36b2ea2906"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/ambitos.svg",
+"bytes": 5846,
+"huella": "1efb721af932"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/anatomia.svg",
+"bytes": 149162,
+"huella": "ab530315bd60"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/arquitecturas.svg",
+"bytes": 4454,
+"huella": "fe94d527881b"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/clearview.svg",
+"bytes": 2678,
+"huella": "d82090835ad1"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/ejes.svg",
+"bytes": 4691,
+"huella": "a59e429c0b8b"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/emociones.svg",
+"bytes": 4321,
+"huella": "705469714dee"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/encuesta.svg",
+"bytes": 2823,
+"huella": "60acba597044"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/eva.svg",
+"bytes": 3988,
+"huella": "8a4b565bc9f2"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/hitos.svg",
+"bytes": 2349,
+"huella": "7572983f3a75"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/red.svg",
+"bytes": 6534,
+"huella": "917752305192"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/sorpresa.svg",
+"bytes": 8027,
+"huella": "6a208143a7b3"
+},
+{
+"ruta": "/diagramacion/figs-diagramas/timeline.svg",
+"bytes": 2361,
+"huella": "573eaa31562a"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1223.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1226.jpg",
+"bytes": 12669,
+"huella": "d76bd20916df"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1239.jpg",
+"bytes": 7133,
+"huella": "dafb180408ac"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1240.jpg",
+"bytes": 12669,
+"huella": "d76bd20916df"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1246.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1256.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1258.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1260.jpg",
+"bytes": 12669,
+"huella": "d76bd20916df"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1281.jpg",
+"bytes": 12669,
+"huella": "d76bd20916df"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1283.jpg",
+"bytes": 31455,
+"huella": "386d69d87620"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1287.jpg",
+"bytes": 12669,
+"huella": "d76bd20916df"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1308.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1314.jpg",
+"bytes": 12669,
+"huella": "d76bd20916df"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1327.jpg",
+"bytes": 31455,
+"huella": "386d69d87620"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1341.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1354.jpg",
+"bytes": 31455,
+"huella": "386d69d87620"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1365.jpg",
+"bytes": 21700,
+"huella": "664a5c1a68ba"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1367.jpg",
+"bytes": 21700,
+"huella": "664a5c1a68ba"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1376.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1379.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1382.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1391.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1393.jpg",
+"bytes": 29766,
+"huella": "d34b308fe56b"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1398.jpg",
+"bytes": 31455,
+"huella": "386d69d87620"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1407.jpg",
+"bytes": 8462,
+"huella": "74a1ba2fbb8e"
+},
+{
+"ruta": "/diagramacion/fotos-sesion/IMG_1414.jpg",
+"bytes": 31455,
+"huella": "386d69d87620"
+},
+{
+"ruta": "/diagramacion/fotos.typ",
+"bytes": 6901,
+"huella": "cdd63d300760"
+},
+{
+"ruta": "/diagramacion/identidad.typ",
+"bytes": 9569,
+"huella": "e4add1ba9e55"
+},
+{
+"ruta": "/diagramacion/identidad/app-feed.jpg",
+"bytes": 24643,
+"huella": "d807b8120dc7"
+},
+{
+"ruta": "/diagramacion/identidad/app-historia.jpg",
+"bytes": 139712,
+"huella": "6483427c98aa"
+},
+{
+"ruta": "/diagramacion/identidad/app-post.jpg",
+"bytes": 253122,
+"huella": "7ffac54a7f00"
+},
+{
+"ruta": "/diagramacion/identidad/app-recordatorio.jpg",
+"bytes": 23443,
+"huella": "65f811bc772b"
+},
+{
+"ruta": "/diagramacion/identidad/bitmap-tile.jpg",
+"bytes": 208300,
+"huella": "35208ada3e07"
+},
+{
+"ruta": "/diagramacion/identidad/bitmap.jpg",
+"bytes": 179174,
+"huella": "b76aef9384ef"
+},
+{
+"ruta": "/diagramacion/identidad/destello.jpg",
+"bytes": 228140,
+"huella": "ee9e51b8147d"
+},
+{
+"ruta": "/diagramacion/identidad/icono.png",
+"bytes": 21817,
+"huella": "f770c972047a"
+},
+{
+"ruta": "/diagramacion/identidad/logo-negro.png",
+"bytes": 13946,
+"huella": "d6e96e6da989"
+},
+{
+"ruta": "/diagramacion/laminas.typ",
+"bytes": 5316,
+"huella": "af7db339be77"
+},
+{
+"ruta": "/diagramacion/limpias/00-resumen.md",
+"bytes": 2608,
+"huella": "17345e604af3"
+},
+{
+"ruta": "/diagramacion/limpias/01-introduccion.md",
+"bytes": 16322,
+"huella": "d55e453b108c"
+},
+{
+"ruta": "/diagramacion/limpias/02-marco-teorico.md",
+"bytes": 26025,
+"huella": "dd2032d5728e"
+},
+{
+"ruta": "/diagramacion/limpias/02b-expediente-america-latina.md",
+"bytes": 6014,
+"huella": "ea3a137296d5"
+},
+{
+"ruta": "/diagramacion/limpias/03-fundamentacion-problematica.md",
+"bytes": 13597,
+"huella": "f51efded4e4e"
+},
+{
+"ruta": "/diagramacion/limpias/04-descripcion-proyecto.md",
+"bytes": 11839,
+"huella": "1a85f5bc5705"
+},
+{
+"ruta": "/diagramacion/limpias/05-objetivos.md",
+"bytes": 6436,
+"huella": "a6d167e0750a"
+},
+{
+"ruta": "/diagramacion/limpias/06-area-intervencion.md",
+"bytes": 2491,
+"huella": "c6a72bba3b4f"
+},
+{
+"ruta": "/diagramacion/limpias/07-proceso-diseno.md",
+"bytes": 18393,
+"huella": "724e19414906"
+},
+{
+"ruta": "/diagramacion/limpias/08-gestion-estrategica.md",
+"bytes": 6667,
+"huella": "00bed37f1e25"
+},
+{
+"ruta": "/diagramacion/limpias/09-referentes.md",
+"bytes": 7690,
+"huella": "7e74180e6c85"
+},
+{
+"ruta": "/diagramacion/limpias/10-metodologia.md",
+"bytes": 14016,
+"huella": "06e30dd13bc1"
+},
+{
+"ruta": "/diagramacion/limpias/11-referencias.md",
+"bytes": 11209,
+"huella": "640bc7c3f4a5"
+},
+{
+"ruta": "/diagramacion/memoria.typ",
+"bytes": 22919,
+"huella": "b13d072e23e0"
+},
+{
+"ruta": "/diagramacion/portada/portada.jpg",
+"bytes": 870077,
+"huella": "a5a7878a50bf"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/01.jpg",
+"bytes": 338725,
+"huella": "d1f399f112ac"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/02.jpg",
+"bytes": 327584,
+"huella": "5dd1b7159372"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/02b.jpg",
+"bytes": 371426,
+"huella": "ace0041c9c85"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/03.jpg",
+"bytes": 296851,
+"huella": "fd90527e5914"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/04.jpg",
+"bytes": 301177,
+"huella": "5af0a7a21b5e"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/05.jpg",
+"bytes": 302475,
+"huella": "fb4ca0b68b77"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/06.jpg",
+"bytes": 311072,
+"huella": "e4270cd903ea"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/07.jpg",
+"bytes": 311333,
+"huella": "ae858af86811"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/08.jpg",
+"bytes": 310868,
+"huella": "3eda8741d21c"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/09.jpg",
+"bytes": 347633,
+"huella": "4c4a7aa29dc5"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/10.jpg",
+"bytes": 342441,
+"huella": "492de3273e92"
+},
+{
+"ruta": "/diagramacion/portadillas-svg/11.jpg",
+"bytes": 340730,
+"huella": "f60c49055e14"
+},
+{
+"ruta": "/diagramacion/rastro.typ",
+"bytes": 20921,
+"huella": "20cadfa1aba9"
+},
+{
+"ruta": "/diagramacion/reglas.typ",
+"bytes": 873,
+"huella": "d1fa8bd64c73"
+},
+{
+"ruta": "/fuentes/GoogleSansCode.ttf",
+"bytes": 126224,
+"huella": "388e21d9151e"
+},
+{
+"ruta": "/fuentes/IBMPlexMono-Medium.ttf",
+"bytes": 136704,
+"huella": "d1246280a315"
+},
+{
+"ruta": "/fuentes/IBMPlexMono-Regular.ttf",
+"bytes": 135580,
+"huella": "2b7c2393fff4"
+},
+{
+"ruta": "/fuentes/IBMPlexSans.ttf",
+"bytes": 537244,
+"huella": "105e2a899b78"
+},
+{
+"ruta": "/fuentes/InterTight-VariableFont_wght.ttf",
+"bytes": 580572,
+"huella": "bca8b03ebdc0"
+},
+{
+"ruta": "/fuentes/Inter_24pt-Bold.ttf",
+"bytes": 344032,
+"huella": "a3fca01f3856"
+},
+{
+"ruta": "/fuentes/Inter_24pt-Regular.ttf",
+"bytes": 342732,
+"huella": "b9984093c0b2"
+},
+{
+"ruta": "/fuentes/JetBrainsMono-Italic[wght].ttf",
+"bytes": 191556,
+"huella": "dfcdf096f4a0"
+},
+{
+"ruta": "/fuentes/JetBrainsMono[wght].ttf",
+"bytes": 187208,
+"huella": "bef242b36d90"
+},
+{
+"ruta": "/fuentes/MartianMono[wdth,wght].ttf",
+"bytes": 148460,
+"huella": "ba350f060171"
+},
+{
+"ruta": "/fuentes/NotoEmoji-Regular.ttf",
+"bytes": 886628,
+"huella": "9fe538257b0b"
+},
+{
+"ruta": "/fuentes/SpaceMono-Bold.ttf",
+"bytes": 98232,
+"huella": "1eac97db6fe4"
+},
+{
+"ruta": "/fuentes/SpaceMono-Regular.ttf",
+"bytes": 99356,
+"huella": "2d6f2aad0983"
+},
+{
+"ruta": "/fuentes/Syne.ttf",
+"bytes": 146980,
+"huella": "050a3e3f6b7b"
+},
+{
+"ruta": "/vendor/cmarker/LICENSE",
+"bytes": 1062,
+"huella": "44cdc3f940e2"
+},
+{
+"ruta": "/vendor/cmarker/lib.typ",
+"bytes": 7178,
+"huella": "96f4d4b4193a"
+},
+{
+"ruta": "/vendor/cmarker/plugin.wasm",
+"bytes": 343005,
+"huella": "e900c5d50579"
+},
+{
+"ruta": "/vendor/cmarker/typst.toml",
+"bytes": 343,
+"huella": "575108c0817f"
+}
+]
+}
